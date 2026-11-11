@@ -3,13 +3,48 @@
 #include <ctime>
 using namespace std;
 
-struct Friends {
+struct Person {
+	string name;
+	int gender;//1 male, 2 female
+	int age;
+};
+string maleNames[25]{ "Liam", "Noah", "Oliver", "James", "Elijah",
+  "Mateo", "Theodore", "Henry", "Lucas", "William",
+  "Benjamin", "Alexander", "Daniel", "Jackson", "Sebastian",
+  "Jack", "Owen", "Samuel", "Julian", "Asher",
+  "Leo", "Luke", "Gabriel", "Atlas", "Finn" };
+string femaleNames[25]{ "Olivia", "Emma", "Charlotte", "Amelia", "Sophia",
+  "Mia", "Isabella", "Ava", "Evelyn", "Luna",
+  "Harper", "Camila", "Sofia", "Scarlett", "Elizabeth",
+  "Eleanor", "Emily", "Chloe", "Mila", "Violet",
+  "Penelope", "Gianna", "Aria", "Abigail", "Ella" };
+
+int generatePerson(Person p[], int position,int age) {
 	string name;
 	int gender;
-	//other
-};
+	int newAge = age;
+	int n;
+	gender = rand() % 2 + 1;
+	if (gender == 1) {
+		n = rand() % 25;
+		name = maleNames[n];
+	}
+	else if (gender == 2) {
+		n = rand() % 25;
+		name = femaleNames[n];
+	}
+	n = rand() % 5 - 2;
+	newAge += n;
+	if (newAge < 0) newAge = 0;
 
-void zeroToFiveEvent(int &health,int &money,int &happiness ){
+	p[position].name = name;
+	p[position].gender = gender;
+	p[position].age = newAge;
+	position++;
+	return position;
+}
+
+void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],int &position) {
 	bool sport = false;
 	int numberEvents = 7;
 	int currentEvent = 0;
@@ -88,7 +123,10 @@ void zeroToFiveEvent(int &health,int &money,int &happiness ){
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			if (choice == 1) {
-				//adding frieds
+				position = generatePerson(f, position, age);
+				cout << "You made a friend:" << endl;
+				cout << "Name: " << f[position - 1].name<<endl;
+				cout << "Age:  " << f[position - 1].age << endl;
 				return;
 			}
 			else if (choice == 2) {
@@ -230,10 +268,6 @@ void zeroToFiveEvent(int &health,int &money,int &happiness ){
 	}
 }
 
-
-
-
-
 int main() {
 	srand(time(nullptr));
 	string name;
@@ -242,6 +276,8 @@ int main() {
 	int health = 100;
 	int money = 0;
 	int happiness = 50;
+	Person friends[10];
+	int fPosition = 0;
 	cout << "insert your name: " << endl;
 	cin >> name;
 	while (true) {
@@ -275,7 +311,7 @@ int main() {
 	system("cls");
 
 	while (age < 5) {
-		zeroToFiveEvent(health,money, happiness);
+		zeroToFiveEvent(health, money, happiness, age,friends,fPosition);
 		age++;
 		cout << "Age:       " << age << endl;
 		cout << "Health:    " << health << endl;
