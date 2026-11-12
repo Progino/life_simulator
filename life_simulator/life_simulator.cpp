@@ -1,6 +1,7 @@
 #include <iostream>
 #include <random>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 struct Person {
@@ -18,6 +19,38 @@ string femaleNames[25]{ "Olivia", "Emma", "Charlotte", "Amelia", "Sophia",
   "Harper", "Camila", "Sofia", "Scarlett", "Elizabeth",
   "Eleanor", "Emily", "Chloe", "Mila", "Violet",
   "Penelope", "Gianna", "Aria", "Abigail", "Ella" };
+vector<string> skills;
+bool death = false;
+
+
+int healthControl(int health) {
+	if (health > 100) {
+		health = 100;
+		return health;
+	}
+	else if (health <= 0) {
+		death = true;
+		return;
+	}
+	else {
+		return health;
+	}
+}
+
+int happinessControl(int happiness, int& health) {
+	if (happiness <= 0) {
+		happiness = 0;
+		health--;
+		cout << "You are depressed" << endl;
+		cout << "-1 health" << endl;
+		return happiness;
+	}
+	else if (happiness >= 100) {
+		happiness = 100;
+		return happiness;
+	}
+	return happiness;
+}
 
 int generatePerson(Person p[], int position,int age) {
 	string name;
@@ -44,9 +77,41 @@ int generatePerson(Person p[], int position,int age) {
 	return position;
 }
 
-void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],int &position) {
+/*
+int menu0To5() {
+	int choice;
+	cout << "1. got to the park(+5 happiness)" << endl;
+	cout << "2. go to the doctor(+10 health) " << endl;
+	cout << "4. see stats" << endl;
+	cout << "5. grow one year" << endl;
+	cin >> choice;
+	return choice;
+}*/
+
+void recap0To5(string name,int age,int health,int money,int happiness,vector<string> skills,string sport,Person friends[], int fPosition) {
+	cout << "           " << name << endl;
+	cout << "Age:       " << age << endl;
+	cout << "Health:    " << health << endl;
+	cout << "Money:     " << money << endl;
+	cout << "Happiness: " << happiness << endl;
+	cout << "Skills:    " << skills[0] << endl;
+	for (int i = 1;i < skills.size();i++) {
+		cout << "           " << skills[i] << endl;
+	}
+	if (sport != "") {
+		cout << "sport:     " << sport << endl;
+	}
+	if (friends[0].name != "") {
+		cout << "friends:   " << friends[0].name << endl;;
+		for (int i = 1;i < fPosition; i++) {
+			cout << "           " << friends[i].name << endl;
+		}
+	}
+}
+
+void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],int &position,string &sp) {
 	bool sport = false;
-	int numberEvents = 7;
+	int numberEvents = 10;
 	int currentEvent = 0;
 	while (true) {
 		currentEvent = rand() % numberEvents + 1;
@@ -57,10 +122,11 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 			break;
 		}
 	}
-	switch (currentEvent) {//friends,skills,sports
+	switch (currentEvent) {
 	case 1: {
 		cout << "You received a toy train from your grandma" << endl;
 		cout << "+5 happiness" << endl;
+		happinessControl(happiness, health);
 		happiness += 5;
 		return;
 		break;
@@ -89,7 +155,9 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 				if (hurt == 0) {
 					cout << "The cat scratched you" << endl;
 					cout << "-5 health" << endl;
+					happiness = happinessControl(happiness, health);
 					health -= 5;
+					health = healthControl(health);
 					return;
 				}
 				else if (hurt == 1) {
@@ -132,6 +200,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 			else if (choice == 2) {
 				cout << "You decide to play by yourself" << endl;
 				cout << "-5 happiness" << endl;
+				happiness = happinessControl(happiness, health);
 				happiness -= 5;
 				return;
 			}
@@ -147,12 +216,14 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		cout << "You eat a candy from the ground and get sick" << endl;
 		cout << "-10 health" << endl;
 		health -= 10;
+		health = healthControl(health);
 		return;
 		break;
 	}
 	case 5: {
 		cout << "You jump in a puddle but fall" << endl;
 		cout << "-2 health" << endl;
+		health = healthControl(health);
 		health -= 2;
 		return;
 		break;
@@ -160,7 +231,16 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 	case 6: {
 		cout << "You learn to ride the bike" << endl;
 		cout << "+1 skill" << endl;
-		//adding skill system
+		bool alreadyLearned = false;
+		for (int i = 0;i < skills.size();i++) {
+			if (skills[i] == "bike") {
+				alreadyLearned = true;
+				break;
+			}
+		}
+		if (!alreadyLearned) {
+			skills.push_back("bike");
+		}
 		return;
 		break;
 	}
@@ -180,8 +260,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			if (choice == 1) {
-				//adding sport system
-				//adding football
+				sp = "football";
 				sport = true;
 				return;
 			}
@@ -213,8 +292,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			if (choice == 1) {
-				//adding sport system
-				//adding basket
+				sp = "basket";
 				sport = true;
 				return;
 			}
@@ -246,8 +324,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			if (choice == 1) {
-				//adding sport system
-				//adding volleyball
+				sp = "volleyball";
 				sport = true;
 				return;
 			}
@@ -261,6 +338,47 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 			}
 		}
 
+	}
+	case 10: {
+		int choice;
+		cout << "You see a pencilcase full of colored pens." << endl;
+		while (true) {
+			cout << "Do you take them?(1.yes 2.no)" << endl;
+			cin >> choice;
+			if (cin.fail()) {
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Insert a valid coordinate" << endl;
+				continue;
+			}
+			else {
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			}
+			if (choice == 1) {
+				cout << "Youlearned to draw" << endl;
+				cout << "+1 skill" << endl;
+				return;
+			}
+			else if (choice == 2) {
+				bool alreadyLearned = false;
+				for (int i = 0;i < skills.size();i++) {
+					if (skills[i] == "drawing") {
+						alreadyLearned = true;
+						break;
+					}
+				}
+				if (!alreadyLearned) {
+					skills.push_back("drawing");
+				}
+				return;
+			}
+			else {
+				cout << "Insert a valid action" << endl;
+				continue;
+			}
+		}
+		return;
+		break;
 	}
 	default:
 		return;
@@ -278,6 +396,7 @@ int main() {
 	int happiness = 50;
 	Person friends[10];
 	int fPosition = 0;
+	string sport;
 	cout << "insert your name: " << endl;
 	cin >> name;
 	while (true) {
@@ -301,27 +420,39 @@ int main() {
 	}
 	system("cls");
 	cout << "Welcome to life " << name << endl;
+	cout << "--------------" << endl;
 	cout << "Age:       " << age << endl;
 	cout << "Health:    " << health << endl;
 	cout << "Money:     " << money << endl;
 	cout << "Happiness: " << happiness << endl;
+	cout << "--------------" << endl;
 	cout << "Press enter to grow one year."<<endl;
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	cin.get();
 	system("cls");
 
 	while (age < 5) {
-		zeroToFiveEvent(health, money, happiness, age,friends,fPosition);
+		zeroToFiveEvent(health, money, happiness, age,friends,fPosition,sport);
 		age++;
+		cout << "--------------" << endl;
 		cout << "Age:       " << age << endl;
 		cout << "Health:    " << health << endl;
 		cout << "Money:     " << money << endl;
 		cout << "Happiness: " << happiness << endl;
 		cout << "Press enter to grow one year."<<endl;
+		cout << "--------------" << endl;
+		if (death = true) {
+			cout << "You died" << endl;
+			recap0To5(name,age,health,money,happiness,skills,sport,friends,fPosition);
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cin.get();
+			return 0;
+		}
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cin.get();
 		system("cls");
 	}
-
+	cout << "First five years recap" << endl;
+	recap0To5(name, age, health, money, happiness, skills, sport, friends, fPosition);
 	return 0;
 }
