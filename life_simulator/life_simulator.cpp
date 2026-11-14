@@ -415,9 +415,10 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 	}
 }
 
-/*void mathProblem() {
+int mathProblem() {
 	int firstN = 0;
 	int secondN = 1;
+	int result;
 	int signI = rand() % 4;
 	string sign;
 	switch (signI) {
@@ -439,18 +440,32 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 			firstN = rand() % 100;
 			secondN = rand() % 100;
 		}
+		if (sign == "+") {
+			result = firstN + secondN;
+		}
+		else if (sign == "-") {
+			result = firstN - secondN;
+		}
 	}
 	else if (sign == "x") {
 		firstN = rand() % 10 + 1;
 		secondN = rand() % 10 + 1;
+		result = firstN * secondN;
 	}
+	else if (sign == "/") {
+		while (firstN % secondN != 0) {
+			firstN = rand() % 10 + 1;
+			secondN = rand() % 10 + 1;
+		}
+		result = firstN / secondN;
+	}
+	cout << firstN << " " << sign << " " << secondN << " = ?" << endl;
+	return result;
+}
 
-}*/
-
-//function for creating math problem
 void school(int& health, int& money, int& happiness,int &iq, int age, Person f[], int& position, string& sp) {
 	//elementary 6-11, middle school 11-14, highschool 14-
-	int numberEvents = 10;
+	int numberEvents = 9;
 	int currentEvent = 0;
 	currentEvent = rand() % numberEvents + 1;
 	if (age >= 6 && age <= 11) {
@@ -562,213 +577,29 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "Are you ready?" << endl;
 			cin.ignore();
 			cin.get();
+			cin.ignore();
 			int score = 0;
 			for(int i=1;i<=5;i++)  {
-				int question = rand() % 8 + 1;
 				int ans;
-				switch (question) {
-				case 1: {
-					while (true) {
-						cout << "15 + 27 = ?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 42) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
+				int result = mathProblem();
+				cin >> ans;
+				if (cin.fail()) {
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					cout << "Insert a number" << endl;
+					continue;
 				}
-				case 2: {
-					while (true) {
-						cout << "8 x 7 = ?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 56) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
+				else {
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					if (ans == result) {
+						cout << "correct" << endl;
+						score++;
+						continue;
 					}
-					break;
-				}
-				case 3: {
-					while (true) {
-						cout << "100 - 36 = ?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 64) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
+					else {
+						cout << "wrong" << endl;
+						continue;
 					}
-					break;
-				}
-				case 4: {
-					while (true) {
-						cout << "45 / 5 = ?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 9) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
-				}
-				case 5: {
-					while (true) {
-						cout << "If you have 12 apples and eat 4, then buy 5 more, how many apples do you have?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 13) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
-				}
-				case 6: {
-					while (true) {
-						cout << "9 x 6 = ?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 54) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
-				}
-				case 7: {
-					while (true) {
-						cout << "Complete the sequence: 2, 4, 8, 16, ...?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 32) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
-				}
-				case 8: {
-					while (true) {
-						cout << "How many minutes are in 2 hours?" << endl;
-						cin >> ans;
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							cout << "Insert a number" << endl;
-							continue;
-						}
-						else {
-							cin.ignore(numeric_limits<streamsize>::max(), '\n');
-							if (ans == 120) {
-								cout << "correct" << endl;
-								score++;
-								break;
-							}
-							else {
-								cout << "wrong" << endl;
-								break;
-							}
-						}
-					}
-					break;
-				}
-				default:
-					return;
 				}
 			}
 			cout << "Your score is: " << score << "/5" << endl;
@@ -901,10 +732,10 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		}
 	}
 	else if (age >= 12 && age <= 14) {
-		cout << "Work in progress" << endl;//work in progress
+		//work in progress
 	}
 	else if (age >= 15 && age <= 18) {
-		cout << "Work in progress" << endl;//work in progress
+		//work in progress
 	}
 }
 
@@ -963,7 +794,7 @@ int main() {
 					cout << "You already went to the park" << endl;
 					cout << "Wait one year for the next action" << endl << endl;
 				}
-				else if (doctor) {
+				else if (doctor){
 					cout << "You alredy went to the doctor" << endl;
 					cout << "Wait one year for the next action" << endl << endl;
 				}
@@ -1088,5 +919,7 @@ int main() {
 		system("cls");
 		
 	}
+	cout << "You finished elementary school" << endl<<endl;
+	cout << "Middle school is work in proress" << endl;
 	return 0;
 }
