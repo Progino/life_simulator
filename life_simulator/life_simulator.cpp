@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <random>
 #include <ctime>
 #include <vector>
@@ -44,6 +45,29 @@ int happinessDeathControl(int happiness, int& health) {
 	else {
 		return happiness;
 	}
+}
+
+int inputControl(int min,int max){
+	int input;
+	while (true) {
+		cin >> input;
+		if (cin.fail()) {
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Insert a valid action" << endl;
+			continue;
+		}
+		else if(input < min || input > max){
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "insert a valid number" << endl;
+			continue;
+		}
+		else {
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
+		}
+	}
+	return input;
 }
 
 int generatePerson(Person p[], int position,int age) {
@@ -98,24 +122,13 @@ void recap0To5(string name, int age, int health, int money, int happiness, vecto
 
 int menu0To5() {
 	int choice;
-	while (true) {
-		cout << endl;
-		cout << "1. got to the park(+5 happiness)" << endl;
-		cout << "2. go to the doctor(+10 health) " << endl;
-		cout << "3. see stats" << endl;
-		cout << "4. grow one year" << endl;
-		cin >> choice;
-		if (cin.fail()) {
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Insert a valid action" << endl;
-			continue;
-		}
-		else {
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			return choice;
-		}
-	}
+	cout << endl;
+	cout << "1. got to the park(+5 happiness)" << endl;
+	cout << "2. go to the doctor(+10 health) " << endl;
+	cout << "3. see stats" << endl;
+	cout << "4. grow one year" << endl;
+	choice = inputControl(1,4);
+	return choice;
 }
 
 void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],int &position,string &sp) {
@@ -137,99 +150,64 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		happiness += 5;
 		happiness = happinessDeathControl(happiness, health);
 		return;
-		break;
 	}
 	case 2: {
 		int choice;
 		int hurt = 1;
-		while (true) {
-			cout << "You see a cat in your backyard" << endl << "Do you pet him?(1.yes 2.no)" << endl;
-			cin >> choice;
-			hurt = rand() % 2;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid coordinate" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 2) {
-				cout << "You watch the cat play by himself" << endl;
+		cout << "You see a cat in your backyard" << endl << "Do you pet him?(1.yes 2.no)" << endl;
+		hurt = rand() % 2;
+		choice = inputControl(1,2);
+		if (choice == 2) {
+			cout << "You watch the cat play by himself" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
+		else if (choice == 1) {
+			if (hurt == 0) {
+				cout << "The cat scratched you" << endl;
+				cout << "-5 health" << endl;
+				health -= 5;
 				happiness = happinessDeathControl(happiness, health);
 				return;
 			}
-			else if (choice == 1) {
-				if (hurt == 0) {
-					cout << "The cat scratched you" << endl;
-					cout << "-5 health" << endl;
-					health -= 5;
-					happiness = happinessDeathControl(happiness, health);
-					return;
-				}
-				else if (hurt == 1) {
-					cout << "You play all day with the cat" << endl;
-					cout << "+5 happiness" << endl;
-					happiness += 5;
-					happiness = happinessDeathControl(happiness, health);
-					return;
-				}
-			}
-			else {
-				cout << "insert a valid action" << endl;
-				continue;
+			else if (hurt == 1) {
+				cout << "You play all day with the cat" << endl;
+				cout << "+5 happiness" << endl;
+				happiness += 5;
+				happiness = happinessDeathControl(happiness, health);
+				return;
 			}
 		}
-		return;
-		break;
 	}
 	case 3: {
 		int choice;
 		cout << "You play with a child in kindergarden" << endl;
-		while (true) {
-			cout << "Do you want to become friend?(1.yes 2.no)" << endl;
-			cin >> choice;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid coordinate" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 1) {
-				if (position < 10) {
-					position = generatePerson(f, position, age);
-					cout << "You made a friend:" << endl;
-					cout << "Name: " << f[position - 1].name << endl;
-					cout << "Age:  " << f[position - 1].age << endl << endl;
-					cout << "+5 happiness" << endl;
-					happiness += 5;
-					happiness = happinessDeathControl(happiness, health);
-				}
-				else {
-					cout << "You can't keep up with all of your friends" << endl;
-					cout << "So you forget immediatley about him/her" << endl;
-					happiness = happinessDeathControl(happiness, health);
-				}
-				return;
-			}
-			else if (choice == 2) {
-				cout << "You decide to play by yourself" << endl;
-				cout << "-5 happiness" << endl;
-				happiness -= 5;
+		cout << "Do you want to become friend?(1.yes 2.no)" << endl;
+		choice = inputControl(1,2);
+		if (choice == 1) {
+			if (position < 10) {
+				position = generatePerson(f, position, age);
+				cout << "You made a friend:" << endl;
+				cout << "Name: " << f[position - 1].name << endl;
+				cout << "Age:  " << f[position - 1].age << endl << endl;
+				cout << "+5 happiness" << endl;
+				happiness += 5;
 				happiness = happinessDeathControl(happiness, health);
-				return;
 			}
 			else {
-				cout << "Insert a valid action" << endl;
-				continue;
+				cout << "You can't keep up with all of your friends" << endl;
+				cout << "So you forget immediatley about him/her" << endl;
+				happiness = happinessDeathControl(happiness, health);
 			}
+			return;
 		}
-		return;
-		break;
+		else if (choice == 2) {
+			cout << "You decide to play by yourself" << endl;
+			cout << "-5 happiness" << endl;
+			happiness -= 5;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
 	}
 	case 4: {
 		cout << "You eat a candy from the ground and get sick" << endl;
@@ -237,7 +215,6 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		health -= 10;
 		happiness = happinessDeathControl(happiness, health);
 		return;
-		break;
 	}
 	case 5: {
 		cout << "You jump in a puddle but fall" << endl;
@@ -245,7 +222,6 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		health -= 2;
 		happiness = happinessDeathControl(happiness, health);
 		return;
-		break;
 	}
 	case 6: {
 		cout << "You learn to ride the bike" << endl;
@@ -262,162 +238,93 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 			skills.push_back("bike");
 		}
 		return;
-		break;
 	}
 	case 7: {
 		int choice;
 		cout << "You go with your dad at a football game." << endl;
-		while (true) {
-			cout << "Do tou decide to begin playing football?(1.yes 2.no)" << endl;
-			cin >> choice;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid coordinate" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 1) {
-				cout << "You start playing football" << endl;
-				sp = "football";
-				happiness = happinessDeathControl(happiness, health);
-				return;
-			}
-			else if (choice == 2) {
-				cout << "You decide that football isn't your thing" << endl;
-				happiness = happinessDeathControl(happiness, health);
-				return;
-			}
-			else {
-				cout << "Insert a avlid action" << endl;
-				continue;
-			}
+		cout << "Do tou decide to begin playing football?(1.yes 2.no)" << endl;
+		choice = inputControl(1,2);
+		if (choice == 1) {
+			cout << "You start playing football" << endl;
+			sp = "football";
+			happiness = happinessDeathControl(happiness, health);
+			return;
 		}
-		return;
-		break;
+		else if (choice == 2) {
+			cout << "You decide that football isn't your thing" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
 	}
 	case 8: {
 		int choice;
 		cout << "You go with your dad at a basket game." << endl;
-		while (true) {
-			cout << "Do tou decide to begin playing basket?(1.yes 2.no)" << endl;
-			cin >> choice;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid action" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 1) {
-				cout << "You start playing basketball" << endl;
-				happiness = happinessDeathControl(happiness, health);
-				sp = "basket";
-				return;
-			}
-			else if (choice == 2) {
-				cout << "You decide that basket isn't your thing" << endl;
-				happiness = happinessDeathControl(happiness, health);
-				return;
-			}
-			else {
-				cout << "Insert a avlid action" << endl;
-				continue;
-			}
+		cout << "Do tou decide to begin playing basket?(1.yes 2.no)" << endl;
+		choice = inputControl(1,2);
+		if (choice == 1) {
+			cout << "You start playing basketball" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			sp = "basket";
+			return;
 		}
-		return;
-		break;
+		else if (choice == 2) {
+			cout << "You decide that basket isn't your thing" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
 	}
 	case 9: {
 		int choice;
 		cout << "You go with your dad at a volleyball game." << endl;
-		while (true) {
-			cout << "Do tou decide to begin playing volleyball?(1.yes 2.no)" << endl;
-			cin >> choice;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid action" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 1) {
-				cout << "You start playing volleyball" << endl;
-				happiness = happinessDeathControl(happiness, health);
-				sp = "volleyball";
-				return;
-			}
-			else if (choice == 2) {
-				cout << "You decide that volleyball isn't your thing" << endl;
-				happiness = happinessDeathControl(happiness, health);
-				return;
-			}
-			else {
-				cout << "Insert a avlid action" << endl;
-				continue;
-			}
+		cout << "Do tou decide to begin playing volleyball?(1.yes 2.no)" << endl;
+		choice = inputControl(1,2);
+		if (choice == 1) {
+			cout << "You start playing volleyball" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			sp = "volleyball";
+			return;
 		}
-
+		else if (choice == 2) {
+			cout << "You decide that volleyball isn't your thing" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
 	}
 	case 10: {
 		int choice;
 		cout << "You see a pencilcase full of colored pens." << endl;
-		while (true) {
-			cout << "Do you take them?(1.yes 2.no)" << endl;
-			cin >> choice;
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Insert a valid coordinate" << endl;
-				continue;
-			}
-			else {
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-			if (choice == 1) {
-				bool alreadyLearned = false;
-				for (int i = 0;i < skills.size();i++) {
-					if (skills[i] == "drawing") {
-						alreadyLearned = true;
-						break;
-					}
+		cout << "Do you take them?(1.yes 2.no)" << endl;
+		choice = inputControl(1,2);
+		if (choice == 1) {
+			bool alreadyLearned = false;
+			for (int i = 0;i < skills.size();i++) {
+				if (skills[i] == "drawing") {
+					alreadyLearned = true;
+					break;
 				}
-				if (!alreadyLearned) {
-					cout << "You learn to draw" << endl;
-					cout << "+1 skill" << endl;
-					skills.push_back("drawing");
-					happiness = happinessDeathControl(happiness, health);
-				}
-				return;
 			}
-			else if (choice == 2) {
-				cout << "You decide not to take them" << endl;
+			if (!alreadyLearned) {
+				cout << "You learn to draw" << endl;
+				cout << "+1 skill" << endl;
+				skills.push_back("drawing");
 				happiness = happinessDeathControl(happiness, health);
-				return;
 			}
-			else {
-				cout << "Insert a valid action" << endl;
-				continue;
-			}
+			return;
 		}
-		return;
-		break;
+		else if (choice == 2) {
+			cout << "You decide not to take them" << endl;
+			happiness = happinessDeathControl(happiness, health);
+			return;
+		}
 	}
 	default:
 		return;
-		break;
 	}
 }
 
 int mathProblem() {
-	int firstN = 0;
-	int secondN = 1;
+	int firstN = 4;
+	int secondN = 3;
 	int result;
 	int signI = rand() % 4;
 	string sign;
@@ -473,48 +380,32 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		case 1: {
 			int choice;
 			cout << "The teacher makes you change seat" << endl;
-			while (true) {
-				cout << "Do you talk with your new seatmate?(1.yes 2.no)" << endl;
-				cin >> choice;
-				if (cin.fail()) {
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					cout << "Insert a valid coordinate" << endl;
-					continue;
-				}
-				else {
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				}
-				if (choice == 1) {
-					if (position < 10) {
-						position = generatePerson(f, position, age);
-						cout << "You made a friend:" << endl;
-						cout << "Name: " << f[position - 1].name << endl;
-						cout << "Age:  " << f[position - 1].age << endl << endl;
-						cout << "+5 happiness" << endl;
-						happiness += 5;
-						happiness = happinessDeathControl(happiness, health);
-					}
-					else {
-						cout << "You can't keep up with all of your friends" << endl;
-						cout << "So you forget immediatley about him/her" << endl;
-						happiness = happinessDeathControl(happiness, health);
-					}
-					return;
-				}
-				else if (choice == 2) {
-					cout << "You decide to stay silent and focus on the lesson" << endl;
-					cout << "+1 iq" << endl;
-					iq++;
+			cout << "Do you talk with your new seatmate?(1.yes 2.no)" << endl;
+			choice = inputControl(1,2);
+			if (choice == 1) {
+				if (position < 10) {
+					position = generatePerson(f, position, age);
+					cout << "You made a friend:" << endl;
+					cout << "Name: " << f[position - 1].name << endl;
+					cout << "Age:  " << f[position - 1].age << endl << endl;
+					cout << "+5 happiness" << endl;
+					happiness += 5;
 					happiness = happinessDeathControl(happiness, health);
-					return;
 				}
 				else {
-					cout << "Insert a valid action" << endl;
-					continue;
+					cout << "You can't keep up with all of your friends" << endl;
+					cout << "So you forget immediatley about him/her" << endl;
+					happiness = happinessDeathControl(happiness, health);
 				}
+				return;
 			}
-			break;
+			else if (choice == 2) {
+				cout << "You decide to stay silent and focus on the lesson" << endl;
+				cout << "+1 iq" << endl;
+				iq++;
+				happiness = happinessDeathControl(happiness, health);
+				return;
+			}
 		}
 		case 2: {
 			cout << "Today is the birthday of one of your classmate" << endl;
@@ -523,83 +414,55 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			happiness += 5;
 			happiness = happinessDeathControl(happiness, health);
 			return;
-			break;
 		}
 		case 3: {
 			int choice;
 			cout << "Today you go on a trip to a musem" << endl;
 			cout << "The museum is about dinosaurs" << endl;
-			while (true) {
-				cout << "Are you interested?(1.yes 2.no)" << endl;
-				cin >> choice;
-				if (cin.fail()) {
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					cout << "Insert a valid coordinate" << endl;
-					continue;
-				}
-				else {
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				}
-				if (choice == 1) {
-					cout << "+1 skill (archeology)" << endl;
-					cout << "+5 iq" << endl;
-					iq += 5;
-					happiness = happinessDeathControl(happiness, health);
-					bool alreadyLearned = false;
-					for (int i = 0;i < skills.size();i++) {
-						if (skills[i] == "archeology") {
-							alreadyLearned = true;
-							break;
-						}
+			cout << "Are you interested?(1.yes 2.no)" << endl;
+			choice = inputControl(1,2);
+			if (choice == 1) {
+				cout << "+1 skill (archeology)" << endl;
+				cout << "+5 iq" << endl;
+				iq += 5;
+				happiness = happinessDeathControl(happiness, health);
+				bool alreadyLearned = false;
+				for (int i = 0;i < skills.size();i++) {
+					if (skills[i] == "archeology") {
+						alreadyLearned = true;
+						break;
 					}
-					if (!alreadyLearned) {
-						skills.push_back("archeology");
-					}
-					return;
 				}
-				else if (choice == 2) {
-					cout << "You just watch bones for an entire day" << endl;
-					cout << "+1 iq" << endl;
-					iq++;
-					happiness = happinessDeathControl(happiness, health);
-					return;
+				if (!alreadyLearned) {
+					skills.push_back("archeology");
 				}
-				else {
-					cout << "Insert a valid action" << endl;
-					continue;
-				}
+				return;
 			}
-			break;
+			else if (choice == 2) {
+				cout << "You just watch bones for an entire day" << endl;
+				cout << "+1 iq" << endl;
+				iq++;
+				happiness = happinessDeathControl(happiness, health);
+				return;
+			}
 		}
 		case 4: {
 			cout << "Today ther is a math test" << endl;
 			cout << "Are you ready?" << endl;
-			cin.ignore();
 			cin.get();
-			cin.ignore();
 			int score = 0;
 			for(int i=1;i<=5;i++)  {
 				int ans;
 				int result = mathProblem();
-				cin >> ans;
-				if (cin.fail()) {
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					cout << "Insert a number" << endl;
+				ans = inputControl(0,300);
+				if (ans == result) {
+					cout << "correct" << endl;
+					score++;
 					continue;
 				}
 				else {
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					if (ans == result) {
-						cout << "correct" << endl;
-						score++;
-						continue;
-					}
-					else {
-						cout << "wrong" << endl;
-						continue;
-					}
+					cout << "wrong" << endl;
+					continue;
 				}
 			}
 			cout << "Your score is: " << score << "/5" << endl;
@@ -630,7 +493,6 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				happiness = happinessDeathControl(happiness, health);
 				return;
 			}
-			break;
 		}
 		case 5: {
 			cout << "You go to the toilet but the door locks you in" << endl;
@@ -638,7 +500,6 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			happiness -= 7;
 			happiness = happinessDeathControl(happiness, health);
 			return;
-			break;
 		}
 		case 6: {
 			string capital;
@@ -657,14 +518,13 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				iq--;
 				return;
 			}
-			break;
 		}
 		case 7: {
 			cout << "You got a flue and had to stay home" << endl;
 			cout << "-8 health" << endl;
 			health -= 8;
-			happinessDeathControl(happiness, health);
-			break;
+			happiness = happinessDeathControl(happiness, health);
+			return;
 		}
 		case 8: {
 			string place;
@@ -676,56 +536,74 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				cout << "You make a new friend" << endl;
 				position = generatePerson(f, position, age);
 				cout << "Your new friend is " << f[position - 1].name << endl;
+				return;
 			}
 			else {
 				int person = rand() % position;
 				cout << "You go to play at the " << place << "." << endl;
 				cout << "You play all recess with " << f[person].name << endl;
+				return;
 			}
-			break;
 		}
 		case 9: {
-			int position = rand() % 5 + 1;
-			cout << "The school host a " << sp << " tournament" << endl;
-			switch (position) {
-			case 1:
-				cout << "You win the enire tournament" << endl;
-				cout << "+15 happiness"<<endl;
-				cout << "+20 money" << endl;
-				happiness += 15;
-				money += 20;
-				happiness = happinessDeathControl(happiness, health);
-				break;
-			case 2:
-				cout << "You got second" << endl;
-				cout << "+6 happiness" << endl;
-				cout << "+10 money" << endl;
-				happiness += 6;
-				money += 10;
-				happiness = happinessDeathControl(happiness, health);
-				break;
-			case 3:
-				cout << "You got third" << endl;
-				cout << "+10 happiness" << endl;
-				cout << "+5 money" << endl;
-				happiness += 10;
-				money += 5;
-				happiness = happinessDeathControl(happiness, health);
-				break;
-			case 4:
-				cout << "You got fifth" << endl;
-				cout << "+2 happiness" << endl;
-				happiness += 2;
-				happiness = happinessDeathControl(happiness, health);
-				break;
-			case 5:
-				cout << "You got last" << endl;
-				cout << "-10 happiness" << endl;
-				happiness -= 10;
-				happiness = happinessDeathControl(happiness, health);
-				break;
+			int rank = rand() % 5 + 1;
+			if (sp != "") {
+				cout << "The school host a " << sp << " tournament" << endl;
+				switch (rank) {
+				case 1:
+					cout << "You win the enire tournament" << endl;
+					cout << "+15 happiness" << endl;
+					cout << "+20 money" << endl;
+					happiness += 15;
+					money += 20;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				case 2:
+					cout << "You got second" << endl;
+					cout << "+6 happiness" << endl;
+					cout << "+10 money" << endl;
+					happiness += 6;
+					money += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				case 3:
+					cout << "You got third" << endl;
+					cout << "+10 happiness" << endl;
+					cout << "+5 money" << endl;
+					happiness += 10;
+					money += 5;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				case 4:
+					cout << "You got fifth" << endl;
+					cout << "+2 happiness" << endl;
+					happiness += 2;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				case 5:
+					cout << "You got last" << endl;
+					cout << "-10 happiness" << endl;
+					happiness -= 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
 			}
-			break;
+			else {
+				cout << "The school host a basketball tournament" << endl;
+				if (position > 0) {
+					cout << "You watch it with your friend" << f[rand() % position].name << endl;
+					cout << "+10 happiness" << endl;
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+				}
+				else {
+					cout << "You watch it from the stands" << endl;
+					cout << "+5 happiness" << endl;
+					happiness += 5;
+					happiness = happinessDeathControl(happiness, health);
+				}
+				return;
+			}
 		}
 		default:
 			return;
@@ -753,25 +631,8 @@ int main() {
 	string sport;
 	cout << "insert your name: " << endl;
 	cin >> name;
-	while (true) {
-		cout << "male(1) or female(2)" << endl;
-		cin >> gender;
-		if (cin.fail()) {
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Insert a valid action" << endl;
-			continue;
-		}
-		else {
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			if (gender == 1 || gender == 2) {
-				break;
-			}
-			else {
-				cout << "insert a valid action" << endl;
-			}
-		}
-	}
+	cout << "male(1) or female(2)" << endl;
+	gender = inputControl(1,2);
 	system("cls");
 	cout << "Welcome to life " << name << endl<<endl;
 	while (age <= 5) {
@@ -790,11 +651,11 @@ int main() {
 					happiness = happinessDeathControl(happiness, health);
 					park = true;
 				}
-				else if(park){
+				else if (park) {
 					cout << "You already went to the park" << endl;
 					cout << "Wait one year for the next action" << endl << endl;
 				}
-				else if (doctor){
+				else if (doctor) {
 					cout << "You alredy went to the doctor" << endl;
 					cout << "Wait one year for the next action" << endl << endl;
 				}
@@ -827,8 +688,6 @@ int main() {
 				cout << "Press enter to grow a year" << endl;
 				Grow = true;
 				break;
-			default:
-				cout << "Insert a valid action"<<endl;
 			}
 			if (Grow) {
 				break;
