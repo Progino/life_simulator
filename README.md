@@ -6,7 +6,7 @@ There is also a friend system, skill system and the more basic that keeps track 
 
 made using visual studio 2026.
 
-##How to play
+###How to play
 download the zip and put it in your desktop. Then extract the .exe file.
 And for last op4en the .exe file.
 
