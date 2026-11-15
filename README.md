@@ -2,7 +2,8 @@
 This is a life simulator created using c++ in the terminal.
 For now you can experience the first 5 years and elementary years of your life.
 Every year a random event occurs and your decisions can change your life.
-There is also a friend system, skill system and the more basic that keeps track of your health, money, happiness, etc...
+You can change your stats once per year using a simple menu.
+There is also a friend system, skill system and the more basic that keeps track of your health, money, happiness, iq, etc...
 
 made using visual studio 2026.
 
