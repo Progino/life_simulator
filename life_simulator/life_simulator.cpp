@@ -70,6 +70,18 @@ int inputControl(int min,int max){
 	return input;
 }
 
+void addSkills(string skill) {
+	bool alreadyLearned = false;
+	for (int i = 0;i < skills.size();i++) {
+		if (skills[i] == skill) {
+			alreadyLearned = true;
+			return;
+		}
+	}
+	skills.push_back(skill);
+	cout << "+1 skill (" << skill << ")" << endl;
+}
+
 int generatePerson(Person p[], int position,int age) {
 	string name;
 	int gender;
@@ -92,6 +104,20 @@ int generatePerson(Person p[], int position,int age) {
 	p[position].gender = gender;
 	p[position].age = newAge;
 	position++;
+	return position;
+}
+
+int addFriend(Person f[], int position,int age) {
+	if (position < 10) {
+		position = generatePerson(f, position, age);
+		cout << "You made a friend:" << endl;
+		cout << "Name: " << f[position - 1].name << endl;
+		cout << "Age:  " << f[position - 1].age << endl << endl;
+	}
+	else {
+		cout << "You can't keep up with all of your friends" << endl;
+		cout << "So you forget immediatley about him/her" << endl;
+	}
 	return position;
 }
 
@@ -120,15 +146,73 @@ void recap0To5(string name, int age, int health, int money, int happiness, vecto
 	cout << endl;
 }
 
-int menu0To5() {
-	int choice;
-	cout << endl;
-	cout << "1. got to the park(+5 happiness)" << endl;
-	cout << "2. go to the doctor(+10 health) " << endl;
-	cout << "3. see stats" << endl;
-	cout << "4. grow one year" << endl;
-	choice = inputControl(1,4);
-	return choice;
+void stats(int age,int health,int iq, int money, int happiness) {
+	cout << "--------------" << endl;
+	cout << "Age:       " << age << endl;
+	cout << "Health:    " << health << endl;
+	cout << "IQ         " << iq << endl;
+	cout << "Money:     " << money << endl;
+	cout << "Happiness: " << happiness << endl;
+	cout << "--------------" << endl;
+}
+
+void menu(int& health, int money, int& happiness, int age,int iq,string happinessS,string healthS) {
+	bool happinessDone = false;
+	bool healthDone = false;
+	while (true) {
+		bool grow = false;
+		int choice;
+		cout << endl;
+		cout << "1. go to the " << happinessS << " (+5 happiness)" << endl;
+		cout << "2. go to the " << healthS << " (+10 health) " << endl;
+		cout << "3. see stats" << endl;
+		cout << "4. grow one year" << endl;
+		choice = inputControl(1, 4);
+		switch (choice) {
+		case 1:
+			if (!happinessDone && !healthDone) {
+				cout << "+5 happiness" << endl;
+				happiness += 5;
+				happiness = happinessDeathControl(happiness, health);
+				happinessDone = true;
+			}
+			else if (happinessDone) {
+				cout << "You already went to the "<<happinessS << endl;
+				cout << "Wait one year for the next action" << endl << endl;
+			}
+			else if (healthDone) {
+				cout << "You alredy went to the "<<healthS << endl;
+				cout << "Wait one year for the next action" << endl << endl;
+			}
+			break;
+		case 2:
+			if (!happinessDone && !healthDone) {
+				cout << "+10 health" << endl;
+				health += 10;
+				happiness = happinessDeathControl(happiness, health);
+				healthDone = true;
+			}
+			else if (happinessDone) {
+				cout << "You already went to the "<<happinessS << endl;
+				cout << "Wait one year for the next action" << endl << endl;
+			}
+			else if (healthDone) {
+				cout << "You alredy went to the "<<healthS << endl;
+				cout << "Wait one year for the next action" << endl << endl;
+			}
+			break;
+		case 3:
+			stats(age, health, iq, money, happiness);
+			break;
+		case 4:
+			grow = true;
+			break;
+		}
+		if (grow) {
+			break;
+		}
+	}
+	return;
 }
 
 void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],int &position,string &sp) {
@@ -185,20 +269,10 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		cout << "Do you want to become friend?(1.yes 2.no)" << endl;
 		choice = inputControl(1,2);
 		if (choice == 1) {
-			if (position < 10) {
-				position = generatePerson(f, position, age);
-				cout << "You made a friend:" << endl;
-				cout << "Name: " << f[position - 1].name << endl;
-				cout << "Age:  " << f[position - 1].age << endl << endl;
-				cout << "+5 happiness" << endl;
-				happiness += 5;
-				happiness = happinessDeathControl(happiness, health);
-			}
-			else {
-				cout << "You can't keep up with all of your friends" << endl;
-				cout << "So you forget immediatley about him/her" << endl;
-				happiness = happinessDeathControl(happiness, health);
-			}
+			position = addFriend(f, position, age);
+			cout << endl << "+5 happiness" << endl;
+			happiness += 5;
+			happiness = happinessDeathControl(happiness, health);
 			return;
 		}
 		else if (choice == 2) {
@@ -225,18 +299,8 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 	}
 	case 6: {
 		cout << "You learn to ride the bike" << endl;
-		cout << "+1 skill" << endl;
+		addSkills("cycling");
 		happiness = happinessDeathControl(happiness, health);
-		bool alreadyLearned = false;
-		for (int i = 0;i < skills.size();i++) {
-			if (skills[i] == "bike") {
-				alreadyLearned = true;
-				break;
-			}
-		}
-		if (!alreadyLearned) {
-			skills.push_back("bike");
-		}
 		return;
 	}
 	case 7: {
@@ -296,19 +360,9 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		cout << "Do you take them?(1.yes 2.no)" << endl;
 		choice = inputControl(1,2);
 		if (choice == 1) {
-			bool alreadyLearned = false;
-			for (int i = 0;i < skills.size();i++) {
-				if (skills[i] == "drawing") {
-					alreadyLearned = true;
-					break;
-				}
-			}
-			if (!alreadyLearned) {
-				cout << "You learn to draw" << endl;
-				cout << "+1 skill" << endl;
-				skills.push_back("drawing");
-				happiness = happinessDeathControl(happiness, health);
-			}
+			cout << "You learn to draw" << endl;
+			addSkills("drawing");
+			happiness = happinessDeathControl(happiness, health);
 			return;
 		}
 		else if (choice == 2) {
@@ -383,20 +437,10 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "Do you talk with your new seatmate?(1.yes 2.no)" << endl;
 			choice = inputControl(1,2);
 			if (choice == 1) {
-				if (position < 10) {
-					position = generatePerson(f, position, age);
-					cout << "You made a friend:" << endl;
-					cout << "Name: " << f[position - 1].name << endl;
-					cout << "Age:  " << f[position - 1].age << endl << endl;
-					cout << "+5 happiness" << endl;
-					happiness += 5;
-					happiness = happinessDeathControl(happiness, health);
-				}
-				else {
-					cout << "You can't keep up with all of your friends" << endl;
-					cout << "So you forget immediatley about him/her" << endl;
-					happiness = happinessDeathControl(happiness, health);
-				}
+				position = addFriend(f, position, age);
+				cout << endl << "+5 happiness" << endl;
+				happiness += 5;
+				happiness = happinessDeathControl(happiness, health);
 				return;
 			}
 			else if (choice == 2) {
@@ -422,20 +466,10 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "Are you interested?(1.yes 2.no)" << endl;
 			choice = inputControl(1,2);
 			if (choice == 1) {
-				cout << "+1 skill (archeology)" << endl;
+				addSkills("archeology");
 				cout << "+5 iq" << endl;
 				iq += 5;
 				happiness = happinessDeathControl(happiness, health);
-				bool alreadyLearned = false;
-				for (int i = 0;i < skills.size();i++) {
-					if (skills[i] == "archeology") {
-						alreadyLearned = true;
-						break;
-					}
-				}
-				if (!alreadyLearned) {
-					skills.push_back("archeology");
-				}
 				return;
 			}
 			else if (choice == 2) {
@@ -447,7 +481,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			}
 		}
 		case 4: {
-			cout << "Today ther is a math test" << endl;
+			cout << "Today there is a math test" << endl;
 			cout << "Are you ready?" << endl;
 			cin.get();
 			int score = 0;
@@ -467,19 +501,9 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			}
 			cout << "Your score is: " << score << "/5" << endl;
 			if (score == 5) {
-				iq += 7;
+				addSkills("math");
 				cout << "+7 iq" << endl;
-				cout << "+1 skill(math)" << endl;
-				bool alreadyLearned = false;
-				for (int i = 0;i < skills.size();i++) {
-					if (skills[i] == "math") {
-						alreadyLearned = true;
-						break;
-					}
-				}
-				if (!alreadyLearned) {
-					skills.push_back("math");
-				}
+				iq += 7;
 				return;
 			}
 			else if (score >= 3 && score <= 4) {
@@ -534,8 +558,10 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			if (position == 0) {
 				cout << "You go to play at the " << place << "." << endl;
 				cout << "You make a new friend" << endl;
-				position = generatePerson(f, position, age);
-				cout << "Your new friend is " << f[position - 1].name << endl;
+				position = addFriend(f,position,age);
+				cout << endl << "+5 happiness" << endl;
+				happiness += 5;
+				happiness = happinessDeathControl(happiness, health);
 				return;
 			}
 			else {
@@ -548,7 +574,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		case 9: {
 			int rank = rand() % 5 + 1;
 			if (sp != "") {
-				cout << "The school host a " << sp << " tournament" << endl;
+				cout << "The school is hosting a " << sp << " tournament" << endl;
 				switch (rank) {
 				case 1:
 					cout << "You win the enire tournament" << endl;
@@ -636,63 +662,9 @@ int main() {
 	system("cls");
 	cout << "Welcome to life " << name << endl<<endl;
 	while (age <= 5) {
-		bool Grow = false;
 		zeroToFiveEvent(health, money, happiness, age,friends,fPosition,sport);
 		age++;
-		bool park = false;
-		bool doctor = false;
-		while (true) {
-			int choice = menu0To5();
-			switch (choice) {
-			case 1:
-				if (!park && !doctor) {
-					cout << "+5 happiness" << endl;
-					happiness += 5;
-					happiness = happinessDeathControl(happiness, health);
-					park = true;
-				}
-				else if (park) {
-					cout << "You already went to the park" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				else if (doctor) {
-					cout << "You alredy went to the doctor" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				break;
-			case 2:
-				if (!doctor && !park) {
-					cout << "+10 health" << endl;
-					health += 10;
-					happiness = happinessDeathControl(happiness, health);
-					doctor = true;
-				}
-				else if (park) {
-					cout << "You already went to the park" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				else if (doctor) {
-					cout << "You alredy went to the doctor" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				break;
-			case 3:
-				cout << "--------------" << endl;
-				cout << "Age:       " << age << endl;
-				cout << "Health:    " << health << endl;
-				cout << "Money:     " << money << endl;
-				cout << "Happiness: " << happiness << endl;
-				cout << "--------------" << endl;
-				break;
-			case 4:
-				cout << "Press enter to grow a year" << endl;
-				Grow = true;
-				break;
-			}
-			if (Grow) {
-				break;
-			}
-		}
+		menu(health, money, happiness, age, iq, "grandparents", "doctor");
 		if (death == true) {
 			cout << "You died" << endl;
 			recap0To5(name,age,health,money,happiness,skills,sport,friends,fPosition);
@@ -709,66 +681,9 @@ int main() {
 	system("cls");
 	cout << "Welcome to school" << endl<<endl;
 	while (age >= 6 && age <= 11) {
-		bool Grow = false;
 		school(health, money, happiness, iq,age, friends, fPosition, sport);
 		age++;
-		bool park = false;
-		bool doctor = false;
-		while (true) {
-			int choice = menu0To5();
-			switch (choice) {
-			case 1:
-				if (!park && !doctor) {
-					cout << "+5 happiness" << endl;
-					happiness += 5;
-					happiness = happinessDeathControl(happiness, health);
-					park = true;
-				}
-				else if (park) {
-					cout << "You already went to the park" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				else if (doctor) {
-					cout << "You alredy went to the doctor" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				break;
-			case 2:
-				if (!doctor && !park) {
-					cout << "+10 health" << endl;
-					health += 10;
-					happiness = happinessDeathControl(happiness, health);
-					doctor = true;
-				}
-				else if (park) {
-					cout << "You already went to the park" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				else if (doctor) {
-					cout << "You alredy went to the doctor" << endl;
-					cout << "Wait one year for the next action" << endl << endl;
-				}
-				break;
-			case 3:
-				cout << "--------------" << endl;
-				cout << "Age:       " << age << endl;
-				cout << "Health:    " << health << endl;
-				cout << "IQ         " << iq << endl;
-				cout << "Money:     " << money << endl;
-				cout << "Happiness: " << happiness << endl;
-				cout << "--------------" << endl;
-				break;
-			case 4:
-				cout << "Press enter to grow a year" << endl;
-				Grow = true;
-				break;
-			default:
-				cout << "Insert a valid action" << endl;
-			}
-			if (Grow) {
-				break;
-			}
-		}
+		menu(health, money, happiness, age, iq, "park", "doctor");
 		if (death == true) {
 			cout << "You died" << endl;
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
