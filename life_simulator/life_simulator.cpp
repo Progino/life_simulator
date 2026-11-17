@@ -377,9 +377,9 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 }
 
 int mathProblem() {
-	int firstN = 4;
-	int secondN = 3;
-	int result;
+	int firstN = 0;
+	int secondN = 0;
+	int result = 0;
 	int signI = rand() % 4;
 	string sign;
 	switch (signI) {
@@ -397,6 +397,8 @@ int mathProblem() {
 		break;
 	}
 	if (sign == "+" || sign == "-") {
+		firstN = 0;
+		secondN = 1;
 		while(firstN < secondN){
 			firstN = rand() % 100;
 			secondN = rand() % 100;
@@ -414,6 +416,8 @@ int mathProblem() {
 		result = firstN * secondN;
 	}
 	else if (sign == "/") {
+		firstN = 4;
+		secondN = 3;
 		while (firstN % secondN != 0) {
 			firstN = rand() % 10 + 1;
 			secondN = rand() % 10 + 1;
@@ -631,12 +635,187 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				return;
 			}
 		}
-		default:
-			return;
 		}
 	}
 	else if (age >= 12 && age <= 14) {
-		//work in progress
+		switch (currentEvent) {
+		case 1: {
+			cout << "A school bully corners you in the hallway and demands your lunch money." << endl;
+			cout << "What do you do?" << endl;
+			cout << "1. You give him the money" << endl;
+			cout << "2. you try escaping" << endl;;
+			cout << "3. You call your friends" << endl;
+			int choice = inputControl(1, 3);
+			if (choice == 1) {
+				if (money <= 0) {
+					cout << "You don't have money so the bully slaps you" << endl;
+					cout << "-1 health" << endl;
+					cout << "-5 happiness" << endl;
+					money = 0;
+					happiness -= 5;
+					health -= 1;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				else if (money <= 5 && money >= 0) {
+					cout << "You give him " << money << " dollars" << endl;
+					money = 0;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				else if (money > 5) {
+					cout << "Tou give him 5 dollars" << endl;
+					money -= 5;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+			}
+			else if (choice == 2) {
+				int escape = rand() % 2;
+				if (escape == 0) {
+					cout << "You managed to escape" << endl;
+					cout << "+1 happiness" << endl;
+					happiness += 1;
+					happiness = happinessDeathControl(happiness, health);
+				}
+				else if (escape == 1) {
+					cout << "You didn't escaped in time and the bully punched you" << endl;
+					cout << "-5 health" << endl;
+					cout << "-10 happiness" << endl;
+					if (money <= 5 && money > 0) {
+						cout << "He takes from you " << money << " dollars" << endl;
+						money = 0;
+						happiness = happinessDeathControl(happiness, health);
+					}
+					else if (money > 5) {
+						cout << "He takes from you 5 dollars" << endl;
+						money -= 5;
+						happiness = happinessDeathControl(happiness, health);
+					}
+					health -= 5;
+					happiness -= 10;
+					happiness = happinessDeathControl(happiness, health);
+				}
+				return;
+			}
+			else if (choice == 3) {
+				if (position == 0) {
+					cout << "You don't have friends that can defend you" << endl;
+					cout << "-5 happiness" << endl;
+					if (money <= 5 && money > 0) {
+						cout << "He takes from you " << money << " dollars" << endl;
+						money = 0;
+						happiness = happinessDeathControl(happiness, health);
+					}
+					else if (money > 5) {
+						cout << "He takes from you 5 dollars" << endl;
+						money -= 5;
+						happiness = happinessDeathControl(happiness, health);
+					}
+					happiness -= 5;
+					happiness = happinessDeathControl(happiness, health);
+				}
+				else {
+					int defend = rand() % 2;
+					if (position == 1) {
+						if (defend == 0) {
+							cout << "Your friend " << f[0].name << " defend you" << endl;
+							cout << "+3 happiness" << endl;
+							happiness += 3;
+							happiness = happinessDeathControl(happiness, health);
+						}
+						else if (defend == 1) {
+							cout << "your friend isn't enough";
+							if (money <= 5 && money >= 0) {
+								cout << "The bully takes from you " << money << " dollars" << endl;
+								money = 0;
+								happiness = happinessDeathControl(happiness, health);
+							}
+							else if (money > 5) {
+								cout << "the bully takes from you 5 dollars" << endl;
+								money -= 5;
+								happiness = happinessDeathControl(happiness, health);
+							}
+							happiness -= 10;
+							happiness = happinessDeathControl(happiness, health);
+						}
+					}
+					else {
+						if (defend == 0) {
+							cout << "Your friends ";
+							for (int i = 0;i < position; i++) {
+								cout << f[i].name << " ";
+							}
+							cout << " defend you" << endl;
+							cout << "+3 happiness" << endl;
+							happiness += 3;
+							happiness = happinessDeathControl(happiness, health);
+						}
+						else if (defend == 1) {
+							cout << "Your friends aren't enough to get the bully away" << endl;
+							if (money <= 5 && money >= 0) {
+								cout << "The bully takes from you " << money << " dollars" << endl;
+								money = 0;
+								happiness = happinessDeathControl(happiness, health);
+							}
+							else if (money > 5) {
+								cout << "the bully takes from you 5 dollars" << endl;
+								money -= 5;
+								happiness = happinessDeathControl(happiness, health);
+							}
+							happiness -= 10;
+							happiness = happinessDeathControl(happiness, health);
+						}
+					}
+				}
+			}
+			break;
+		}
+		case 2: {
+			cout << "Today is the school Cross Country race" << endl;
+			cout << "The race will be 2 miles" << endl;
+			cout << "1. Start fast(high risk)" << endl;
+			cout << "2. Keep a steady pace(low risk)" << endl;
+			int start = inputControl(1, 2);
+			if (start == 1) {
+				int stamina = rand() % 10 + 1;
+				if (stamina >= 0 && stamina <= 8) {
+					cout << "After 1.5 miles you get exhausted" << endl;
+					int standing = rand() % 10 + 20;
+					cout << "You came " << standing << endl;
+				}
+				else if (stamina >= 9) {
+					int standing = rand() % 5 + 1;
+					cout << "You manage to resist until the end" << endl;
+					cout << "you got " << standing << endl;
+					cout << "+5 happiness" << endl;
+					happiness += 5;
+					addSkills("running");
+					happiness = happinessDeathControl(happiness, health);
+				}
+			}
+			else if (start == 2) {
+				int standing = rand() % 10 + 10;
+				cout << "You keep your pace" << endl;
+				cout << "And get " << standing << endl;
+			}
+		}
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
+			break;
+		case 9:
+			break;
+		}
 	}
 	else if (age >= 15 && age <= 18) {
 		//work in progress
@@ -694,6 +873,23 @@ int main() {
 		
 	}
 	cout << "You finished elementary school" << endl<<endl;
-	cout << "Middle school is work in proress" << endl;
+	// adding stats recap
+	cout << "Press enter to start middle school" << endl;
+	cin.get();
+	system("cls");
+	cout << "Welcome to middle school" << endl << endl;
+	while (age >= 12 && age <= 14) {
+		school(health, money, happiness, iq, age, friends, fPosition, sport);
+		age++;
+		menu(health, money, happiness, age, iq, "park", "doctor");
+		if (death == true) {
+			cout << "You died" << endl;
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cin.get();
+			return 0;
+		}
+		system("cls");
+	}
+	
 	return 0;
 }
