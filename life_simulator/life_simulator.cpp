@@ -677,6 +677,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					cout << "+1 happiness" << endl;
 					happiness += 1;
 					happiness = happinessDeathControl(happiness, health);
+					return;
 				}
 				else if (escape == 1) {
 					cout << "You didn't escaped in time and the bully punched you" << endl;
@@ -714,6 +715,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					}
 					happiness -= 5;
 					happiness = happinessDeathControl(happiness, health);
+					return;
 				}
 				else {
 					int defend = rand() % 2;
@@ -723,6 +725,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							cout << "+3 happiness" << endl;
 							happiness += 3;
 							happiness = happinessDeathControl(happiness, health);
+							return;
 						}
 						else if (defend == 1) {
 							cout << "your friend isn't enough";
@@ -738,6 +741,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							}
 							happiness -= 10;
 							happiness = happinessDeathControl(happiness, health);
+							return;
 						}
 					}
 					else {
@@ -750,6 +754,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							cout << "+3 happiness" << endl;
 							happiness += 3;
 							happiness = happinessDeathControl(happiness, health);
+							return;
 						}
 						else if (defend == 1) {
 							cout << "Your friends aren't enough to get the bully away" << endl;
@@ -765,12 +770,13 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							}
 							happiness -= 10;
 							happiness = happinessDeathControl(happiness, health);
+							return;
 						}
 					}
 				}
 			}
-			break;
 		}
+			break;
 		case 2: {
 			cout << "Today is the school Cross Country race" << endl;
 			cout << "The race will be 2 miles" << endl;
@@ -783,6 +789,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					cout << "After 1.5 miles you get exhausted" << endl;
 					int standing = rand() % 10 + 20;
 					cout << "You came " << standing << endl;
+					return;
 				}
 				else if (stamina >= 9) {
 					int standing = rand() % 5 + 1;
@@ -792,16 +799,20 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					happiness += 5;
 					addSkills("running");
 					happiness = happinessDeathControl(happiness, health);
+					return;
 				}
 			}
 			else if (start == 2) {
 				int standing = rand() % 10 + 10;
 				cout << "You keep your pace" << endl;
 				cout << "And get " << standing << endl;
+				return;
 			}
 		}
 			break;
-		case 3:
+		case 3: {
+
+		}
 			break;
 		case 4:
 			break;
