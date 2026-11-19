@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <random>
 #include <ctime>
 #include <vector>
 #include <limits>
@@ -125,6 +124,32 @@ void recap0To5(string name, int age, int health, int money, int happiness, vecto
 	cout << "           " << name << endl;
 	cout << "Age:       " << age << endl;
 	cout << "Health:    " << health << endl;
+	cout << "Money:     " << money << endl;
+	cout << "Happiness: " << happiness << endl;
+	if (!skills.empty()) {
+		cout << "Skills:    " << skills[0] << endl;
+		for (int i = 1;i < skills.size();i++) {
+			cout << "           " << skills[i] << endl;
+		}
+	}
+
+	if (sport != "") {
+		cout << "sport:     " << sport << endl;
+	}
+	if (friends[0].name != "") {
+		cout << "friends:   " << friends[0].name << endl;;
+		for (int i = 1;i < fPosition; i++) {
+			cout << "           " << friends[i].name << endl;
+		}
+	}
+	cout << endl;
+}
+
+void recapElementary(string name, int age, int health, int iq, int money, int happiness, vector<string> skills, string sport, Person friends[], int fPosition) {
+	cout << "           " << name << endl;
+	cout << "Age:       " << age << endl;
+	cout << "Health:    " << health << endl;
+	cout << "iq         " << iq << endl;
 	cout << "Money:     " << money << endl;
 	cout << "Happiness: " << happiness << endl;
 	if (!skills.empty()) {
@@ -426,6 +451,82 @@ int mathProblem() {
 	}
 	cout << firstN << " " << sign << " " << secondN << " = ?" << endl;
 	return result;
+}
+
+int logicProblem() {
+	int problem = rand() % 2;
+	switch (problem) {
+	case 0: {
+		int startN = rand() % 10 + 1;
+		int add = rand() % 4 + 1;
+		int result = startN;
+		for (int i = 0;i < 5;i++) {
+			result += add;
+		}
+		for (int i = 0;i < 5; i++) {
+			cout << startN << " ";
+			startN += add;
+		}
+		cout << "?" << endl;
+		return result;
+		}
+	case 1: {
+		int startN = rand() % 10 + 1;
+		int add = rand() % 4 + 1;
+		int result = startN;
+		for (int i = 0;i < 5; i++) {
+			cout << startN << " ";
+			result += add;
+			add++;
+		}
+		for (int i = 0;i < 5;i++) {
+			cout << startN << " ";
+			startN += add;
+			add++;
+		}
+		cout << "?" << endl;
+		return result;
+	}
+	}
+}
+
+int symbolProblem() {
+	int firstN = 3;
+	int secondN = 4;
+	int result = 0;
+	int signI = rand() % 4;
+	string sign;
+	if (signI == 0) {
+		sign = "+";
+		firstN = rand() % 200;
+		secondN = rand() % 200;
+		result = firstN + secondN;
+	}
+	else if (signI == 1) {
+		sign = "-";
+		while (firstN < secondN) {
+			firstN = rand() % 200;
+			secondN = rand() % 200;
+		}
+		result = firstN - secondN;
+	}
+	else if (signI == 2) {
+		sign = "X";
+		firstN = rand() % 11;
+		secondN = rand() % 11;
+		result = firstN * secondN;
+	}
+	else if (signI == 3) {
+		sign = "/";
+		while (firstN % secondN != 0) {
+			firstN = rand() % 11;
+			secondN = rand() % 11;
+		}
+		result = firstN / secondN;
+	}
+	cout << "Find the value of Y" << endl << endl;
+	cout << " Y " << sign << " " << secondN << " = " << result << endl;
+	return firstN;
 }
 
 void school(int& health, int& money, int& happiness,int &iq, int age, Person f[], int& position, string& sp) {
@@ -776,7 +877,6 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				}
 			}
 		}
-			break;
 		case 2: {
 			cout << "Today is the school Cross Country race" << endl;
 			cout << "The race will be 2 miles" << endl;
@@ -809,16 +909,115 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				return;
 			}
 		}
-			break;
 		case 3: {
-
+			cout << "Your ask your Mom for an allowance" << endl;
+			cout << "How do you ask?" << endl;
+			cout << "1. You ask politely" << endl;
+			cout << "2. You complain that all your friends have it" << endl;
+			cout << "3. You ask by saying that tìyou are having good scores" << endl;
+			int choice = inputControl(1, 3);
+			switch (choice) {
+			case 1: {
+				int allowance = rand() % 10;
+				if (allowance <= 8) {
+					cout << "Your Mom accept a gives you 20 dollars" << endl;
+					money += 20;
+					return;
+				}
+				else if (allowance >= 9) {
+					cout << "Your Mom says that you are stil too small" << endl;
+					return;
+				}
+			}
+			case 2: {
+				int allowance = rand() % 10;
+				if (allowance <= 8) {
+					cout << "Your mom gets angry at you" << endl;
+					cout << "-5 happiness" << endl;
+					happiness -= 5;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				else if (allowance >= 9) {
+					cout << "Your Mom accepts and gives you 10 dollars" << endl;
+					money += 10;
+					return;
+				}
+			}
+			case 3: {
+				if (iq >= 10) {
+					cout << "Your mom accepts and gives you 25 dollars" << endl;
+					money += 25;
+					return;
+				}
+				else {
+					cout << "Your scores aren't high enough" << endl;
+					return;
+				}
+			}
+			}
 		}
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
+		case 4: {
+			cout << "Today you have a logic test" << endl;
+			cout << "Are you ready?" << endl;
+			cin.get();
+			int score = 0;
+			for (int i = 0;i < 5;i++) {
+				int type = rand() % 2;
+				switch (type) {
+				case 0: {
+					{
+						int result = logicProblem();
+						int answer = inputControl(0, 400);
+						if (result == answer) {
+							cout << "Correct" << endl;
+							score++;
+						}
+						else {
+							cout << "Wrong" << endl;
+						}
+					}
+				}
+				case 1: {
+					int result = symbolProblem();
+					int answer = inputControl(0, 400);
+					if (result == answer) {
+						cout << "Correct" << endl;
+						score++;
+					}
+					else {
+						cout << "Wrong" << endl;
+					}
+				}
+				}
+			}
+			cout << score << "/5" << endl;
+			if (score == 5) {
+				cout << "+10 iq" << endl;
+				iq += 10;
+				return;
+			}
+			else if (score < 5 && score > 2) {
+				cout << "+5 iq" << endl;
+				iq += 5;
+				return;
+			}
+			else {
+				cout << "-5 iq" << endl;
+				iq -= 5;
+				return;
+			}
+		}
+		case 5: {/*
+			cout << "Your school is organising afternoon clubs" << endl;
+			cout << "What club do you want to partecipate in" << endl << endl;
+			cout << "1. music club" << endl;
+			cout << "2. art club" << endl;
+			cout << "3. math club" << endl;
+			cout << "4. book club" << endl;*/
+		}
 		case 6:
+			//birthday based on your skill
 			break;
 		case 7:
 			break;
@@ -830,6 +1029,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 	}
 	else if (age >= 15 && age <= 18) {
 		//work in progress
+		return;
 	}
 }
 
@@ -884,7 +1084,7 @@ int main() {
 		
 	}
 	cout << "You finished elementary school" << endl<<endl;
-	// adding stats recap
+	recapElementary(name,age,health,iq,money,happiness,skills,sport,friends,fPosition);
 	cout << "Press enter to start middle school" << endl;
 	cin.get();
 	system("cls");
