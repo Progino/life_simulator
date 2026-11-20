@@ -20,6 +20,7 @@ string femaleNames[25]{ "Olivia", "Emma", "Charlotte", "Amelia", "Sophia",
   "Harper", "Camila", "Sofia", "Scarlett", "Elizabeth",
   "Eleanor", "Emily", "Chloe", "Mila", "Violet",
   "Penelope", "Gianna", "Aria", "Abigail", "Ella" };
+string abilities[7]{ "cycling","art","archeology","math","music","reading","drama"};
 vector<string> skills;
 bool death = false;
 
@@ -386,7 +387,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,Person f[],i
 		choice = inputControl(1,2);
 		if (choice == 1) {
 			cout << "You learn to draw" << endl;
-			addSkills("drawing");
+			addSkills("art");
 			happiness = happinessDeathControl(happiness, health);
 			return;
 		}
@@ -460,12 +461,10 @@ int logicProblem() {
 		int startN = rand() % 10 + 1;
 		int add = rand() % 4 + 1;
 		int result = startN;
-		for (int i = 0;i < 5;i++) {
-			result += add;
-		}
 		for (int i = 0;i < 5; i++) {
 			cout << startN << " ";
 			startN += add;
+			result += add;
 		}
 		cout << "?" << endl;
 		return result;
@@ -476,12 +475,8 @@ int logicProblem() {
 		int result = startN;
 		for (int i = 0;i < 5; i++) {
 			cout << startN << " ";
-			result += add;
-			add++;
-		}
-		for (int i = 0;i < 5;i++) {
-			cout << startN << " ";
 			startN += add;
+			result += add;
 			add++;
 		}
 		cout << "?" << endl;
@@ -533,7 +528,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 	//elementary 6-11, middle school 11-14, highschool 14-
 	int numberEvents = 9;
 	int currentEvent = 0;
-	currentEvent = rand() % numberEvents + 1;
+	currentEvent = 4;//rand() % numberEvents + 1
 	if (age >= 6 && age <= 11) {
 		switch (currentEvent) {
 		case 1: {
@@ -977,6 +972,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							cout << "Wrong" << endl;
 						}
 					}
+					break;
 				}
 				case 1: {
 					int result = symbolProblem();
@@ -988,6 +984,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					else {
 						cout << "Wrong" << endl;
 					}
+					break;
 				}
 				}
 			}
@@ -1008,18 +1005,126 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				return;
 			}
 		}
-		case 5: {/*
+		case 5: {
 			cout << "Your school is organising afternoon clubs" << endl;
 			cout << "What club do you want to partecipate in" << endl << endl;
 			cout << "1. music club" << endl;
 			cout << "2. art club" << endl;
 			cout << "3. math club" << endl;
-			cout << "4. book club" << endl;*/
+			cout << "4. book club" << endl;
+			cout << "5. drama club" << endl;
+			cout << "6. none" << endl;
+			int club = inputControl(1, 6);
+			switch (club) {
+			case 1: {
+				cout << "You join the music club" << endl;
+				addSkills("music");
+				return;
+			}
+			case 2: {
+				cout << "You join the art club" << endl;
+				addSkills("art");
+				return;
+			}
+			case 3: {
+				cout << "You join the math club" << endl;
+				addSkills("math");
+				return;
+			}
+			case 4: {
+				cout << "You join the book club" << endl;
+				addSkills("reading");
+				return;
+			}
+			case 5: {
+				cout << "You join the drama club" << endl;
+				addSkills("drama");
+				return;
+			}
+			case 6: {
+				cout << "You decide not to bother with clubs" << endl;
+				return;
+			}
+			}
 		}
-		case 6:
+		case 6: {
 			//birthday based on your skill
-			break;
+			cout << "Today is your birthday" << endl;
+			string gift = skills[rand() % (sizeof(abilities) / sizeof(abilities))];
+			int p = -1;
+			for (int i = 0; i < (sizeof(abilities) / sizeof(abilities));i++) {
+				if (gift == abilities[i]) {
+					p = i;
+					break;
+				}
+			}
+			while (true) {
+				switch (p) {
+				case -1: {
+					p = rand() % (sizeof(abilities) / sizeof(abilities));
+					break;
+				}
+				case 0: {
+					cout << "You receive from your friends a new sadle" << endl;
+					addSkills("cycling");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 1: {
+					cout << "You receive from your friends new brushes" << endl;
+					addSkills("art");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 2: {
+					cout << "You receive from your friends some old fossils" << endl;
+					addSkills("archeology");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 3: {
+					cout << "You receive from your friends the newest calculator model" << endl;
+					addSkills("math");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 4: {
+					cout << "You receive from your friends new headphones" << endl;
+					addSkills("music");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 5: {
+					cout << "You receive from your friends new books" << endl;
+					addSkills("reading");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				case 6: {
+					cout << "You receive from your friends a theatre ticket" << endl;
+					addSkills("drama");
+					cout << "+10 happiness";
+					happiness += 10;
+					happiness = happinessDeathControl(happiness, health);
+					return;
+				}
+				}
+			}
+		}
 		case 7:
+			//event based on club
 			break;
 		case 8:
 			break;
