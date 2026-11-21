@@ -524,11 +524,29 @@ int symbolProblem() {
 	return firstN;
 }
 
+int racePosition(int pos) {
+	if (pos == 1) {
+		int pos = rand() % 5 + 1;
+		cout << "You got " << pos << endl;
+		return pos;
+	}
+	else if (pos == 2) {
+		int pos = rand() % 15 + 6;
+		cout << "You got " << pos << endl;
+		return pos;
+	}
+	else if (pos == 3) {
+		int pos = rand() % 20 + 21;
+		cout << "You got " << pos << endl;
+		return pos;
+	}
+}
+
 void school(int& health, int& money, int& happiness,int &iq, int age, Person f[], int& position, string& sp) {
-	//elementary 6-11, middle school 11-14, highschool 14-
+	//elementary 6-11, middle school 11-14	, highschool 14-18
 	int numberEvents = 9;
 	int currentEvent = 0;
-	currentEvent = 4;//rand() % numberEvents + 1
+	currentEvent = rand() % numberEvents + 1;
 	if (age >= 6 && age <= 11) {
 		switch (currentEvent) {
 		case 1: {
@@ -734,6 +752,15 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		}
 	}
 	else if (age >= 12 && age <= 14) {
+		while (true) {
+			currentEvent = rand() % numberEvents + 1;
+			if (skills[0] == "" && (currentEvent >= 6 && currentEvent <= 8)) {
+				continue;
+			}
+			else {
+				break;
+			}
+		}
 		switch (currentEvent) {
 		case 1: {
 			cout << "A school bully corners you in the hallway and demands your lunch money." << endl;
@@ -882,14 +909,12 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				int stamina = rand() % 10 + 1;
 				if (stamina >= 0 && stamina <= 8) {
 					cout << "After 1.5 miles you get exhausted" << endl;
-					int standing = rand() % 10 + 20;
-					cout << "You came " << standing << endl;
+					racePosition(3);
 					return;
 				}
 				else if (stamina >= 9) {
-					int standing = rand() % 5 + 1;
 					cout << "You manage to resist until the end" << endl;
-					cout << "you got " << standing << endl;
+					racePosition(1);
 					cout << "+5 happiness" << endl;
 					happiness += 5;
 					addSkills("running");
@@ -898,9 +923,8 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				}
 			}
 			else if (start == 2) {
-				int standing = rand() % 10 + 10;
 				cout << "You keep your pace" << endl;
-				cout << "And get " << standing << endl;
+				racePosition(2);
 				return;
 			}
 		}
@@ -1048,7 +1072,6 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			}
 		}
 		case 6: {
-			//birthday based on your skill
 			cout << "Today is your birthday" << endl;
 			string gift = skills[rand() % (sizeof(abilities) / sizeof(abilities))];
 			int p = -1;
@@ -1123,12 +1146,205 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				}
 			}
 		}
-		case 7:
-			//event based on club
-			break;
+		case 7: {
+			string event = skills[rand() % (sizeof(abilities) / sizeof(abilities))];
+			int p = -1;
+			for (int i = 0; i < (sizeof(abilities) / sizeof(abilities));i++) {
+				if (event == abilities[i]) {
+					p = i;
+					break;
+				}
+			}
+			while (true) {
+				switch (p) {
+				case -1: {
+					p = rand() % (sizeof(abilities) / sizeof(abilities));
+					break;
+				}
+				case 0: {
+					cout << "You partecipate in a bike race" << endl;
+					cout << "What do you do" << endl;
+					cout << "1. you stay with the pack" << endl;
+					cout << "2. you remain in the pack and wait the last sprint" << endl;
+					int race = inputControl(1, 2);
+					if (race == 1) {
+						cout << "You decide to go all out in the final sprint" << endl;
+						int pos = racePosition(2);
+						cout << "You get 20 dollars as a prize" << endl;
+						money += 20;
+						return;
+					}
+					else if (race == 2) {
+						int fail = rand() % 10 + 1;
+						if (fail <= 8) {
+							cout << "You get exhausted before the finish line and get caught" << endl;
+							racePosition(3);
+							cout << "You get 5 dollars as a prize" << endl;
+							money += 5;
+							return;
+						}
+						else if (fail >= 9) {
+							cout << "You manage to finish in the front" << endl;
+							racePosition(1);
+							cout << "You get 50 dollars as a prize"<<endl;
+							money += 50;
+							cout << "+10 happiness" << endl;
+							happiness += 10;
+							happiness = happinessDeathControl(happiness, health);
+							addSkills("cycling");
+							return;
+						}
+					}
+				}
+				case 1: {
+					cout << "You partecipate in an art contest" << endl;
+					cout << "What do you decide to paint" << endl;
+					cout << "1. nature" << endl;
+					cout << "2. abstract" << endl;
+					cout << "3. skyline" << endl;
+					cout << "4. portrait" << endl;
+					inputControl(1, 4);
+					int art = racePosition(rand() % 3 + 1);
+					if (position <= 5) {
+						cout << "An expert decide to buy your painting for 50 dollars" << endl;
+						money += 50;
+						addSkills("art");
+						return;
+					}
+					else {
+						cout << "An expert decide to buy your painting for 5 dollars" << endl;
+						money += 5;
+						return;
+					}
+				}
+				case 2: {
+					cout << "You get called to go to a real fossil site" << endl;
+					int fossil = rand() % 3;
+					switch (fossil) {
+					case 0: {
+						cout << "You find a common fish fossil" << endl;
+						cout << "They decide to buy it from you for 5 dollars" << endl;
+						money += 5;
+						break;
+					}
+					case 1: {
+						cout << "You find a rare tooth of a dinosaur" << endl;
+						cout << "They decide to buy it form you for 15 dollars" << endl;
+						money += 15;
+						break;
+					}
+					case 2: {
+						cout << "You find an enire t-rex skull" << endl;
+						cout << "They decide to buy it from you for 100 dollars" << endl;
+						cout << "You get to choose the name of that new t-rex" << endl;
+						cout << "name: " << endl;
+						string tRex;
+						getline(cin, tRex);
+						cout << "The t-rex new name is " << tRex << endl;
+						money += 100;
+						break;
+					}
+					}
+					addSkills("archeology");
+					return;
+				}
+				case 3: {
+					cout << "You partecipate to a math competition" << endl;
+					if (iq <= 5) {
+						cout << "Your iq is too low" << endl;
+						racePosition(3);
+						cout << "You get 5 dollars as a prize" << endl;
+						money += 5;
+						return;
+					}
+					else if (iq >= 6 && iq <= 15) {
+						cout << "You have an avarage iq" << endl;
+						racePosition(2);
+						cout << "You get 10 dollars as a prize" << endl;
+						money += 10;
+						return;
+					}
+					else if (iq > 15) {
+						cout << "Your iq is above avarage" << endl;
+						racePosition(1);
+						cout << "You get 50 dollars as a prize" << endl;
+						money += 50;
+						cout << "+5 happiness" << endl;
+						happiness += 5;
+						happiness = happinessDeathControl(happiness, health);
+						addSkills("math");
+						return;
+					}
+				}
+				case 4: {
+					cout << "You win a contest to be in first row to your favourite singer/band" << endl;
+					cout << "What singer/band would you like to see?" << endl;
+					string band;
+					getline(cin, band);
+					cout << "You went to the " << band << " concert" << endl;
+					addSkills("music");
+					return;
+				}
+				case 5: {
+					cout << "You get called to write a book for a contest" << endl;
+					int book = rand() % 3;
+					switch (book) {
+					case 0: {
+						cout << "You write a kids book" << endl;
+						cout << "The experts decide to pay it 5 dollars" << endl;
+						money += 5;
+						break;
+					}
+					case 1: {
+						cout << "You write a fantasy book" << endl;
+						cout << "The experts decide to pay it 15 dollars" << endl;
+						money += 15;
+						break;
+					}
+					case 2: {
+						cout << "You write a real masterpiece" << endl;
+						cout << "The experts decide to pay it 100 dollars" << endl;
+						money += 100;
+						break;
+					}
+					}
+					addSkills("reading");
+					return;
+				}
+				case 6: {
+					cout << "You go to an audition for a movie" << endl;
+					int movie = rand() % 3;
+					switch (movie) {
+					case 0: {
+						cout << "You get the part of an extra" << endl;
+						cout << "They pay you 5 dollars" << endl;
+						money += 5;
+						break;
+					}
+					case 1: {
+						cout << "You get the part of a side character" << endl;
+						cout << "Theypay tou 15 dollars" << endl;
+						money += 15;
+						break;
+					}
+					case 2: {
+						cout << "You get the protagonist role" << endl;
+						cout << "They pay you 100 dollars" << endl;
+						money += 100;
+						break;
+					}
+					}
+					addSkills("drama");
+					return;
+				}
+				}
+			}
+		}
 		case 8:
+			//need event
 			break;
 		case 9:
+			//need event
 			break;
 		}
 	}
