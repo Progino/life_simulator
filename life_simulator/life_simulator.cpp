@@ -22,33 +22,47 @@ string femaleNames[25]{ "Olivia", "Emma", "Charlotte", "Amelia", "Sophia",
   "Eleanor", "Emily", "Chloe", "Mila", "Violet",
   "Penelope", "Gianna", "Aria", "Abigail", "Ella" };
 string abilities[8]{ "cycling","art","archeology","math","music","reading","drama","sea"};
-vector<string> skills;
-bool death = false;
 
-int happinessDeathControl(int happiness, int& health) {
-	if (happiness <= 0) {
-		happiness = 0;
-		health--;
+struct Player {
+	string name;
+	int gender = 1;
+	int age = 0;
+	int health = 100;
+	int money = 0;
+	int happiness = 50;
+	int iq = 0;
+	string sport = "";
+	vector<string> skills;
+	vector<Person> friends;
+	bool death = false;
+};
+
+
+
+void happinessDeathControl(Player& p) {
+	if (p.happiness <= 0) {
+		p.happiness = 0;
+		p.health--;
 		cout << "You are depressed" << endl;
 		cout << "-1 health" << endl;
 	}
-	else if (happiness >= 100) {
-		happiness = 100;
+	else if (p.happiness >= 100) {
+		p.happiness = 100;
 	}
-	if (health > 100) {
-		health = 100;
-		return happiness;
+	if (p.health > 100) {
+		p.health = 100;
+		return;
 	}
-	else if (health <= 0) {
-		death = true;
-		return 0;
+	else if (p.health <= 0) {
+		p.death = true;
+		return;
 	}
 	else {
-		return happiness;
+		return;
 	}
 }
 
-void update(int& happiness, int h, int& health, int he, int& money, int m, int& iq, int i) {
+void update(Player &p, int h, int he, int m, int i) {
 	if (h != 0) {
 		if (h < 0) {
 			cout << h << " happiness" << endl;
@@ -56,7 +70,7 @@ void update(int& happiness, int h, int& health, int he, int& money, int m, int& 
 		else if (h > 0) {
 			cout << "+" << h << " happiness" << endl;
 		}
-		happiness += h;
+		p.happiness += h;
 	}
 	if (he != 0) {
 		if (he < 0) {
@@ -65,7 +79,7 @@ void update(int& happiness, int h, int& health, int he, int& money, int m, int& 
 		else if (he > 0) {
 			cout << "+" << he << " health" << endl;
 		}
-		health += he;
+		p.health += he;
 	}
 	if (m != 0) {
 		if (m < 0) {
@@ -74,9 +88,9 @@ void update(int& happiness, int h, int& health, int he, int& money, int m, int& 
 		else if (m > 0) {
 			cout << "+" << m << " dollars" << endl;
 		}
-		money += m;
-		if (money < 0) {
-			money = 0;
+		p.money += m;
+		if (p.money < 0) {
+			p.money = 0;
 		}
 	}
 	if (i != 0) {
@@ -86,12 +100,15 @@ void update(int& happiness, int h, int& health, int he, int& money, int m, int& 
 		else if (i > 0) {
 			cout << "+" << i << " iq" << endl;
 		}
-		iq += i;
+		p.iq += i;
+		if (p.iq < 0) {
+			p.iq = 0;
+		}
 	}
-	happiness = happinessDeathControl(happiness, health);
+	happinessDeathControl(p);
 	return;
 }
-//TO USE IN ALL CASES
+
 int inputControl(int min,int max){
 	int input;
 	while (true) {
@@ -115,19 +132,18 @@ int inputControl(int min,int max){
 	return input;
 }
 
-void addSkills(string skill) {
+void addSkills(Player &p,string skill) {
 	bool alreadyLearned = false;
-	for (int i = 0;i < skills.size();i++) {
-		if (skills[i] == skill) {
-			alreadyLearned = true;
+	for (int i = 0;i < p.skills.size();i++) {
+		if (p.skills[i] == skill) {
 			return;
 		}
 	}
-	skills.push_back(skill);
+	p.skills.push_back(skill);
 	cout << "+1 skill (" << skill << ")" << endl;
 }
 
-int generatePerson(Person p[], int position,int age) {
+Person generatePerson(int age) {
 	string name;
 	int gender;
 	int newAge = age;
@@ -145,89 +161,69 @@ int generatePerson(Person p[], int position,int age) {
 	newAge += n;
 	if (newAge < 0) newAge = 0;
 
-	p[position].name = name;
-	p[position].gender = gender;
-	p[position].age = newAge;
-	position++;
-	return position;
+	Person newPerson;
+	newPerson.name = name;
+	newPerson.gender = gender;
+	newPerson.age = newAge;
+	return newPerson;
 }
 
-int addFriend(Person f[], int position,int age) {
-	if (position < 10) {
-		position = generatePerson(f, position, age);
+void addFriend(Player &p) {
+	if (p.friends.size() < 10) {
+		Person newFriend = generatePerson(p.age);
+		p.friends.push_back(newFriend);
+
 		cout << "You made a friend:" << endl;
-		cout << "Name: " << f[position - 1].name << endl;
-		cout << "Age:  " << f[position - 1].age << endl << endl;
+		cout << "Name: " << newFriend.name << endl;
+		cout << "Age:  " << newFriend.age << endl << endl;
 	}
 	else {
 		cout << "You can't keep up with all of your friends" << endl;
 		cout << "So you forget immediately about him/her" << endl;
 	}
-	return position;
 }
 
-void recap0To5(string name, int age, int health, int money, int happiness, vector<string> skills, string sport, Person friends[], int fPosition) {
-	cout << "           " << name << endl;
-	cout << "Age:       " << age << endl;
-	cout << "Health:    " << health << endl;
-	cout << "Money:     " << money << endl;
-	cout << "Happiness: " << happiness << endl;
-	if (!skills.empty()) {
-		cout << "Skills:    " << skills[0] << endl;
-		for (int i = 1;i < skills.size();i++) {
-			cout << "           " << skills[i] << endl;
+void recap(const Player &p) {
+	cout << "           " << p.name << endl;
+	cout << "Age:       " << p.age << endl;
+	cout << "Health:    " << p.health << endl;
+	cout << "Happiness: " << p.happiness << endl;
+	if (p.age > 5) {
+		cout << "money      " << p.money << endl;
+		cout << "iq         " << p.iq << endl;
+	}
+	if (!p.skills.empty()) {
+		cout << "Skills:    " << p.skills[0] << endl;
+		for (int i = 1;i < p.skills.size();i++) {
+			cout << "           " << p.skills[i] << endl;
 		}
 	}
 
-	if (sport != "") {
-		cout << "sport:     " << sport << endl;
+	if (p.sport != "") {
+		cout << "sport:     " << p.sport << endl;
 	}
-	if (friends[0].name != "") {
-		cout << "friends:   " << friends[0].name << endl;;
-		for (int i = 1;i < fPosition; i++) {
-			cout << "           " << friends[i].name << endl;
-		}
-	}
-	cout << endl;
-}
-
-void recapElementary(string name, int age, int health, int iq, int money, int happiness, vector<string> skills, string sport, Person friends[], int fPosition) {
-	cout << "           " << name << endl;
-	cout << "Age:       " << age << endl;
-	cout << "Health:    " << health << endl;
-	cout << "iq         " << iq << endl;
-	cout << "Money:     " << money << endl;
-	cout << "Happiness: " << happiness << endl;
-	if (!skills.empty()) {
-		cout << "Skills:    " << skills[0] << endl;
-		for (int i = 1;i < skills.size();i++) {
-			cout << "           " << skills[i] << endl;
-		}
-	}
-
-	if (sport != "") {
-		cout << "sport:     " << sport << endl;
-	}
-	if (friends[0].name != "") {
-		cout << "friends:   " << friends[0].name << endl;;
-		for (int i = 1;i < fPosition; i++) {
-			cout << "           " << friends[i].name << endl;
+	if (!p.friends.empty()) {
+		cout << "Friends:   " << p.friends[0].name << endl;
+		for (int i = 1; i < p.friends.size(); i++) {
+			cout << "           " << p.friends[i].name << endl;
 		}
 	}
 	cout << endl;
 }
 
-void stats(int age,int health,int iq, int money, int happiness) {
+void stats(const Player& p) {
 	cout << "--------------" << endl;
-	cout << "Age:       " << age << endl;
-	cout << "Health:    " << health << endl;
-	cout << "IQ         " << iq << endl;
-	cout << "Money:     " << money << endl;
-	cout << "Happiness: " << happiness << endl;
+	cout << "Age:       " << p.age << endl;
+	cout << "Health:    " << p.health << endl;
+	if (p.age > 5) {
+		cout << "IQ         " << p.iq << endl;
+		cout << "Money:     " << p.money << endl;
+	}
+	cout << "Happiness: " << p.happiness << endl;
 	cout << "--------------" << endl;
 }
 
-void menu(int& health, int money, int& happiness, int age,int iq,string happinessS,string healthS) {
+void menu(Player& p, string happinessS, string healthS) {
 	bool happinessDone = false;
 	bool healthDone = false;
 	while (true) {
@@ -242,9 +238,7 @@ void menu(int& health, int money, int& happiness, int age,int iq,string happines
 		switch (choice) {
 		case 1:
 			if (!happinessDone && !healthDone) {
-				cout << "+5 happiness" << endl;
-				happiness += 5;
-				happiness = happinessDeathControl(happiness, health);
+				update(p, 5, 0, 0, 0);
 				happinessDone = true;
 			}
 			else if (happinessDone) {
@@ -258,9 +252,10 @@ void menu(int& health, int money, int& happiness, int age,int iq,string happines
 			break;
 		case 2:
 			if (!happinessDone && !healthDone) {
-				cout << "+10 health" << endl;
-				health += 10;
-				happiness = happinessDeathControl(happiness, health);
+				update(p, 0, 10, 0, 0);
+				if (p.health > 100) {
+					p.health = 100;
+				}
 				healthDone = true;
 			}
 			else if (happinessDone) {
@@ -273,7 +268,7 @@ void menu(int& health, int money, int& happiness, int age,int iq,string happines
 			}
 			break;
 		case 3:
-			stats(age, health, iq, money, happiness);
+			stats(p);
 			break;
 		case 4:
 			grow = true;
@@ -286,12 +281,12 @@ void menu(int& health, int money, int& happiness, int age,int iq,string happines
 	return;
 }
 
-void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Person f[],int &position,string &sp) {
+void zeroToFiveEvent(Player &p) {
 	int numberEvents = 10;
 	int currentEvent = 0;
 	while (true) {
 		currentEvent = rand() % numberEvents + 1;
-		if (sp != "" && (currentEvent >= 7 && currentEvent <=9)) {
+		if (p.sport != "" && (currentEvent >= 7 && currentEvent <=9)) {
 			continue;
 		}
 		else {
@@ -301,7 +296,7 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 	switch (currentEvent) {
 	case 1: {
 		cout << "You received a toy train from your grandma" << endl;
-		update(happiness, 5, health, 0, money, 0,iq, 0);
+		update(p, 5, 0, 0, 0);
 		return;
 	}
 	case 2: {
@@ -312,18 +307,18 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		choice = inputControl(1,2);
 		if (choice == 2) {
 			cout << "You watch the cat play by himself" << endl;
-			happiness = happinessDeathControl(happiness, health);
+			happinessDeathControl(p);
 			return;
 		}
 		else if (choice == 1) {
 			if (hurt == 0) {
 				cout << "The cat scratched you" << endl;
-				update(happiness, 0, health, 5, money, 0, iq, 0);
+				update(p, 0, -5, 0, 0);
 				return;
 			}
 			else if (hurt == 1) {
 				cout << "You play all day with the cat" << endl;
-				update(happiness, 5, health, 0, money, 0, iq, 0);
+				update(p, 5, 0, 0,  0);
 				return;
 			}
 		}
@@ -334,31 +329,31 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		cout << "Do you want to become friends?(1.yes 2.no)" << endl;
 		choice = inputControl(1,2);
 		if (choice == 1) {
-			position = addFriend(f, position, age);
+			addFriend(p);
 			cout << endl;
-			update(happiness, 5, health, 0, money, 0, iq, 0);
+			update(p, 5, 0, 0, 0);
 			return;
 		}
 		else if (choice == 2) {
 			cout << "You decide to play by yourself" << endl;
-			update(happiness, 5, health, 0, money, 0, iq, 0);
+			update(p, 5, 0, 0, 0);
 			return;
 		}
 	}
 	case 4: {
 		cout << "You eat a candy from the ground and get sick" << endl;
-		update(happiness, 0, health,-10, money, 0, iq, 0);
+		update(p, 0,-10, 0, 0);
 		return;
 	}
 	case 5: {
 		cout << "You jump in a puddle but fall" << endl;
-		update(happiness, 0, health, -2, money, 0, iq, 0);
+		update(p, 0, -2, 0, 0);
 		return;
 	}
 	case 6: {
 		cout << "You learn to ride the bike" << endl;
-		addSkills("cycling");
-		happiness = happinessDeathControl(happiness, health);
+		addSkills(p,"cycling");
+		happinessDeathControl(p);
 		return;
 	}
 	case 7: {
@@ -368,13 +363,13 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		choice = inputControl(1,2);
 		if (choice == 1) {
 			cout << "You start playing football" << endl;
-			sp = "football";
-			happiness = happinessDeathControl(happiness, health);
+			p.sport = "football";
+			happinessDeathControl(p);
 			return;
 		}
 		else if (choice == 2) {
 			cout << "You decide that football isn't your thing" << endl;
-			happiness = happinessDeathControl(happiness, health);
+			happinessDeathControl(p);
 			return;
 		}
 	}
@@ -385,13 +380,13 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		choice = inputControl(1,2);
 		if (choice == 1) {
 			cout << "You start playing basketball" << endl;
-			happiness = happinessDeathControl(happiness, health);
-			sp = "basket";
+			happinessDeathControl(p);
+			p.sport = "basket";
 			return;
 		}
 		else if (choice == 2) {
 			cout << "You decide that basketball isn't your thing" << endl;
-			happiness = happinessDeathControl(happiness, health);
+			happinessDeathControl(p);
 			return;
 		}
 	}
@@ -402,13 +397,13 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		choice = inputControl(1,2);
 		if (choice == 1) {
 			cout << "You start playing volleyball" << endl;
-			happiness = happinessDeathControl(happiness, health);
-			sp = "volleyball";
+			happinessDeathControl(p);
+			p.sport = "volleyball";
 			return;
 		}
 		else if (choice == 2) {
 			cout << "You decide that volleyball isn't your thing" << endl;
-			happiness = happinessDeathControl(happiness, health);
+			happinessDeathControl(p);
 			return;
 		}
 	}
@@ -419,13 +414,13 @@ void zeroToFiveEvent(int &health,int &money,int &happiness, int age,int iq,Perso
 		choice = inputControl(1,2);
 		if (choice == 1) {
 			cout << "You learn to draw" << endl;
-			addSkills("art");
-			happiness = happinessDeathControl(happiness, health);
+			addSkills(p,"art");
+			happinessDeathControl(p);
 			return;
 		}
 		else if (choice == 2) {
 			cout << "You decide not to take them" << endl;
-			happiness = happinessDeathControl(happiness, health);
+			happinessDeathControl(p);
 			return;
 		}
 	}
@@ -547,8 +542,8 @@ int symbolProblem() {
 	else if (signI == 3) {
 		sign = "/";
 		while (firstN % secondN != 0) {
-			firstN = rand() % 11;
-			secondN = rand() % 11;
+			firstN = rand() % 10 + 1;
+			secondN = rand() % 10 + 1;
 		}
 		result = firstN / secondN;
 	}
@@ -576,12 +571,12 @@ int racePosition(int pos) {
 	return 0;
 }
 
-void school(int& health, int& money, int& happiness,int &iq, int age, Person f[], int& position, string& sp) {
+void school(Player &p) {
 	//elementary 6-11, middle school 11-14	, highschool 14-18
 	int numberEvents = 9;
 	int currentEvent = 0;
 	currentEvent = rand() % numberEvents + 1;
-	if (age >= 6 && age <= 11) {
+	if (p.age >= 6 && p.age <= 11) {
 		switch (currentEvent) {
 		case 1: {
 			int choice;
@@ -589,21 +584,21 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "Do you talk with your new seatmate?(1.yes 2.no)" << endl;
 			choice = inputControl(1,2);
 			if (choice == 1) {
-				position = addFriend(f, position, age);
+				addFriend(p);
 				cout << endl;
-				update(happiness, 5, health, 0, money, 0, iq, 0);
+				update(p, 5, 0, 0, 0);
 				return;
 			}
 			else if (choice == 2) {
 				cout << "You decide to stay silent and focus on the lesson" << endl;
-				update(happiness, 0, health, 0, money, 0, iq, 1);
+				update(p, 0, 0, 0, 1);
 				return;
 			}
 		}
 		case 2: {
 			cout << "Today is the birthday of one of your classmate" << endl;
 			cout << "And they brought cake for everyone" << endl;
-			update(happiness, 5, health, 0, money, 0, iq, 0);
+			update(p, 5, 0, 0, 0);
 			return;
 		}
 		case 3: {
@@ -613,13 +608,13 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "Are you interested?(1.yes 2.no)" << endl;
 			choice = inputControl(1,2);
 			if (choice == 1) {
-				addSkills("archeology");
-				update(happiness, 0, health, 0, money, 0, iq, 5);
+				addSkills(p,"archeology");
+				update(p ,0, 0, 0, 5);
 				return;
 			}
 			else if (choice == 2) {
 				cout << "You just watch bones for an entire day" << endl;
-				update(happiness, 0, health, 0, money, 0, iq, 1);
+				update(p, 0, 0, 0, 1);
 				return;
 			}
 		}
@@ -644,22 +639,22 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			}
 			cout << "Your score is: " << score << "/5" << endl;
 			if (score == 5) {
-				addSkills("math");
-				update(happiness, 0, health, 0, money, 0, iq, 7);
+				addSkills(p,"math");
+				update(p, 0, 0, 0, 7);
 				return;
 			}
 			else if (score >= 3 && score <= 4) {
-				update(happiness, 0, health, 0, money, 0, iq, 3);
+				update(p, 0, 0, 0, 3);
 				return;
 			}
 			else if (score <= 2) {
-				update(happiness, -4, health, 0, money, 0, iq, 0);
+				update(p, -4, 0, 0, 0);
 				return;
 			}
 		}
 		case 5: {
 			cout << "You go to the toilet but the door locks you in" << endl;
-			update(happiness, -7, health, 0, money, 0, iq, 0);
+			update(p, -7, 0, 0, 0);
 			return;
 		}
 		case 6: {
@@ -669,18 +664,18 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			getline(cin, capital);
 			if (capital == "Paris" || capital == "paris") {
 				cout << "You got it correctly" << endl;
-				update(happiness, 0, health, 0, money, 0, iq, 2);
+				update(p, 0, 0, 0, 2);
 				return;
 			}
 			else {
 				cout << "Wrong. The answer was 'Paris'" << endl;
-				update(happiness, 5, health, 0, money, 0, iq, -1);
+				update(p, 0, 0, 0, -1);
 				return;
 			}
 		}
 		case 7: {
 			cout << "You got a flu and had to stay home" << endl;
-			update(happiness,0 , health, -8, money, 0, iq, 0);
+			update(p, 0, -8, 0, 0);
 			return;
 		}
 		case 8: {
@@ -688,67 +683,67 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "At recess you decide to play with someone" << endl;
 			cout << "where do you want to play?" << endl;
 			getline(cin, place);
-			if (position == 0) {
+			if (p.friends.empty()) {
 				cout << "You go to play at the " << place << "." << endl;
 				cout << "You make a new friend" << endl;
-				position = addFriend(f,position,age);
+				addFriend(p);
 				cout << endl;
-				update(happiness, 5, health, 0, money, 0, iq, 0);
+				update(p, 5, 0, 0, 0);
 				return;
 			}
 			else {
-				int person = rand() % position;
+				int person = rand() % p.friends.size();
 				cout << "You go to play at the " << place << "." << endl;
-				cout << "You play all recess with " << f[person].name << endl;
+				cout << "You play all recess with " << p.friends[person].name << endl;
 				return;
 			}
 		}
 		case 9: {
 			int rank = rand() % 5 + 1;
-			if (sp != "") {
-				cout << "The school is hosting a " << sp << " tournament" << endl;
+			if (p.sport != "") {
+				cout << "The school is hosting a " << p.sport << " tournament" << endl;
 				switch (rank) {
 				case 1:
 					cout << "You win the entire tournament" << endl;
-					update(happiness, 15, health, 0, money, 20, iq, 0);
+					update(p, 15, 0, 20, 0);
 					return;
 				case 2:
 					cout << "You got second" << endl;
-					update(happiness, 6, health, 0, money, 10, iq, 0);
+					update(p, 6, 0, 10, 0);
 					return;
 				case 3:
 					cout << "You got third" << endl;
-					update(happiness, 10, health, 0, money, 5, iq, 0);
+					update(p, 10, 0, 5, 0);
 					return;
 				case 4:
 					cout << "You got fifth" << endl;
-					update(happiness, 2, health, 0, money, 0, iq, 0);
+					update(p, 2, 0, 0, 0);
 					return;
 				case 5:
 					cout << "You got last" << endl;
-					update(happiness, -10, health, 0, money, 0, iq, 0);
+					update(p, -10, 0, 0, 0);
 					return;
 				}
 			}
 			else {
 				cout << "The school host a basketball tournament" << endl;
-				if (position > 0) {
-					cout << "You watch it with your friend " << f[rand() % position].name << endl;
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+				if (!p.friends.empty()) {
+					cout << "You watch it with your friend " << p.friends[rand() % p.friends.size()].name << endl;
+					update(p, 10, 0, 0, 0);
 				}
 				else {
 					cout << "You watch it from the stands" << endl;
-					update(happiness, 5, health, 0, money, 0, iq, 0);
+					update(p, 5, 0, 0, 0);
 				}
 				return;
 			}
 		}
 		}
 	}
-	else if (age >= 12 && age <= 14) {
+	else if (p.age >= 12 && p.age <= 14) {
 		while (true) {
 			currentEvent = rand() % numberEvents + 1;
-			if (skills.empty() && (currentEvent >= 6 && currentEvent <= 8)) {
+			if (p.skills.empty() && (currentEvent >= 6 && currentEvent <= 8)) {
 				continue;
 			}
 			else {
@@ -764,18 +759,18 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			cout << "3. You call your friends" << endl;
 			int choice = inputControl(1, 3);
 			if (choice == 1) {
-				if (money <= 0) {
+				if (p.money <= 0) {
 					cout << "You don't have money so the bully slaps you" << endl;
-					update(happiness, -5, health, -1, money, 0, iq, 0);
+					update(p, -5, -1, 0, 0);
 					return;
 				}
-				else if (money <= 5 && money >0) {
-					cout << "You give him " << money << " dollars" << endl;
-					money = 0;
+				else if (p.money <= 5 && p.money >0) {
+					cout << "You give him " << p.money << " dollars" << endl;
+					p.money = 0;
 					return;
 				}
-				else if (money > 5) {
-					update(happiness, 0, health, 0, money, -5, iq, 0);
+				else if (p.money > 5) {
+					update(p, 0, 0,-5, 0);
 					return;
 				}
 			}
@@ -783,81 +778,81 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				int escape = rand() % 2;
 				if (escape == 0) {
 					cout << "You managed to escape" << endl;
-					update(happiness, 1, health, 0, money, 0, iq, 0);
+					update(p, 1, 0, 0, 0);
 					return;
 				}
 				else if (escape == 1) {
 					cout << "You didn't escape in time and the bully punched you" << endl;
-					update(happiness, -10, health, -5, money, 0, iq, 0);
-					if (money <= 5 && money > 0) {
-						cout << "He takes from you " << money << " dollars" << endl;
-						money = 0;
+					update(p, -10, -5, 0, 0);
+					if (p.money <= 5 && p.money > 0) {
+						cout << "He takes from you " << p.money << " dollars" << endl;
+						p.money = 0;
 					}
-					else if (money > 5) {
+					else if (p.money > 5) {
 						cout << "He takes from you 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, -5, iq, 0);
+						update(p, 0, 0, -5, 0);
 					}
 
 				}
 				return;
 			}
 			else if (choice == 3) {
-				if (position == 0) {
+				if (p.friends.empty()) {
 					cout << "You don't have friends that can defend you" << endl;
-					update(happiness, -5, health, 0, money, 0, iq, 0);
-					if (money <= 5 && money > 0) {
-						cout << "He takes from you " << money << " dollars" << endl;
-						money = 0;
+					update(p, -5, 0, 0, 0);
+					if (p.money <= 5 && p.money > 0) {
+						cout << "He takes from you " << p.money << " dollars" << endl;
+						p.money = 0;
 					}
-					else if (money > 5) {
+					else if (p.money > 5) {
 						cout << "He takes from you 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, -5, iq, 0);
+						update(p, 0, 0, -5, 0);
 					}
 					return;
 				}
 				else {
 					int defend = rand() % 2;
-					if (position == 1) {
+					if (p.friends.size() == 1) {
 						if (defend == 0) {
-							cout << "Your friend " << f[0].name << " defends you" << endl;
-							update(happiness, 3, health, 0, money, 0, iq, 0);
+							cout << "Your friend " << p.friends[0].name << " defends you" << endl;
+							update(p, 3, 0, 0, 0);
 							return;
 						}
 						else if (defend == 1) {
-							cout << "your friend isn't enough" << endl;;
-							if (money <= 5 && money > 0) {
-								cout << "The bully takes from you " << money << " dollars" << endl;
-								money = 0;
+							cout << "your friend isn't enough" << endl;
+							if (p.money <= 5 && p.money > 0) {
+								cout << "The bully takes from you " << p.money << " dollars" << endl;
+								p.money = 0;
 							}
-							else if (money > 5) {
+							else if (p.money > 5) {
 								cout << "the bully takes from you 5 dollars" << endl;
-								update(happiness, 0, health, 0, money, -5, iq, 0);
+								update(p, 0, 0, -5, 0);
 							}
-							update(happiness, -5, health, 0, money, 0, iq, 0);
+							update(p, -5, 0, 0, 0);
 							return;
 						}
 					}
 					else {
 						if (defend == 0) {
 							cout << "Your friends ";
-							for (int i = 0;i < position; i++) {
-								cout << f[i].name << ", ";
+							for (int i = 0; i < p.friends.size(); i++) {
+								cout << p.friends[i].name << ", ";
 							}
 							cout << " defend you" << endl;
-							update(happiness, 3, health, 0, money, 0, iq, 0);
+							update(p, 3, 0, 0, 0);
 							return;
 						}
 						else if (defend == 1) {
 							cout << "Your friends aren't enough to get the bully away" << endl;
-							if (money <= 5 && money > 0) {
-								cout << "The bully takes from you " << money << " dollars" << endl;
-								money = 0;
+							if (p.money <= 5 && p.money > 0) {
+								cout << "The bully takes from you " << p.money << " dollars" << endl;
+								p.money = 0;
 							}
-							else if (money > 5) {
+							else if (p.money > 5) {
 								cout << "the bully takes from you 5 dollars" << endl;
-								update(happiness, 0, health, 0, money, -5, iq, 0);
+								update(p, 0, 0, -5, 0);
 							}
-							update(happiness, -10, health, 0, money, 0, iq, 0);
+							update(p, -10, 0, 0, 0);
 							return;
 						}
 					}
@@ -880,7 +875,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				else if (stamina >= 9) {
 					cout << "You manage to resist until the end" << endl;
 					racePosition(1);
-					update(happiness, 5, health, 0, money, 0, iq, 0);
+					update(p, 5, 0, 0, 0);
 					return;
 				}
 			}
@@ -902,7 +897,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				int allowance = rand() % 10;
 				if (allowance <= 8) {
 					cout << "Your Mom accepts a gives you 20 dollars" << endl;
-					update(happiness, 0, health, 0, money, 20, iq, 0);
+					update(p, 0, 0, 20, 0);
 					return;
 				}
 				else if (allowance >= 9) {
@@ -914,19 +909,19 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				int allowance = rand() % 10;
 				if (allowance <= 8) {
 					cout << "Your mom gets angry at you" << endl;
-					update(happiness, -4, health, 0, money, 0, iq, 0);
+					update(p, -4, 0, 0, 0);
 					return;
 				}
 				else if (allowance >= 9) {
 					cout << "Your Mom accepts and gives you 10 dollars" << endl;
-					update(happiness, 0, health, 0, money, 10, iq, 0);
+					update(p, 0, 0, 10, 0);
 					return;
 				}
 			}
 			case 3: {
-				if (iq >= 10) {
+				if (p.iq >= 10) {
 					cout << "Your mom accepts and gives you 25 dollars" << endl;
-					update(happiness, 0, health, 0, money, 25, iq, 0);
+					update(p, 0, 0, 25, 0);
 					return;
 				}
 				else {
@@ -974,15 +969,15 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			}
 			cout << score << "/5" << endl;
 			if (score == 5) {
-				update(happiness, 0, health, 0, money, 0, iq, 10);
+				update(p, 0, 0, 0, 10);
 				return;
 			}
 			else if (score < 5 && score > 2) {
-				update(happiness, 0, health, 0, money, 0, iq, 5);
+				update(p, 0, 0, 0, 5);
 				return;
 			}
 			else {
-				update(happiness, 0, health, 0, money, 0, iq, -5);
+				update(p, 0, 0, 0, -5);
 				return;
 			}
 		}
@@ -999,27 +994,27 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			switch (club) {
 			case 1: {
 				cout << "You join the music club" << endl;
-				addSkills("music");
+				addSkills(p,"music");
 				return;
 			}
 			case 2: {
 				cout << "You join the art club" << endl;
-				addSkills("art");
+				addSkills(p,"art");
 				return;
 			}
 			case 3: {
 				cout << "You join the math club" << endl;
-				addSkills("math");
+				addSkills(p,"math");
 				return;
 			}
 			case 4: {
 				cout << "You join the book club" << endl;
-				addSkills("reading");
+				addSkills(p,"reading");
 				return;
 			}
 			case 5: {
 				cout << "You join the drama club" << endl;
-				addSkills("drama");
+				addSkills(p,"drama");
 				return;
 			}
 			case 6: {
@@ -1031,59 +1026,59 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		case 6: {
 			cout << "Today is your birthday" << endl;
 			string gift = abilities[rand() % (sizeof(abilities) / sizeof(abilities[0]))];
-			int p = -1;
+			int pi = -1;
 			for (int i = 0; i < (sizeof(abilities) / sizeof(abilities[0]));i++) {
 				if (gift == abilities[i]) {
-					p = i;
+					pi = i;
 					break;
 				}
 			}
 			while (true) {
-				switch (p) {
+				switch (pi) {
 				case -1: {
-					p = rand() % (sizeof(abilities) / sizeof(abilities[0]));
+					pi = rand() % (sizeof(abilities) / sizeof(abilities[0]));
 					break;
 				}
 				case 0: {
 					cout << "You receive from your friends a new saddle" << endl;
-					addSkills("cycling");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"cycling");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 1: {
 					cout << "You receive from your friends new brushes" << endl;
-					addSkills("art");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"art");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 2: {
 					cout << "You receive from your friends some old fossils" << endl;
-					addSkills("archeology");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"archeology");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 3: {
 					cout << "You receive from your friends the newest calculator model" << endl;
-					addSkills("math");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"math");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 4: {
 					cout << "You receive from your friends new headphones" << endl;
-					addSkills("music");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"music");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 5: {
 					cout << "You receive from your friends new books" << endl;
-					addSkills("reading");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"reading");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 6: {
 					cout << "You receive from your friends a theatre ticket" << endl;
-					addSkills("drama");
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					addSkills(p,"drama");
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				case 7: {
@@ -1092,25 +1087,25 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					string fish;
 					getline(cin, fish);
 					cout << "You call him " << fish << endl;
-					update(happiness, 10, health, 0, money, 0, iq, 0);
+					update(p, 10, 0, 0, 0);
 					return;
 				}
 				}
 			}
 		}
 		case 7: {
-			string event = skills[rand() % skills.size()];
-			int p = -1;
+			string event = p.skills[rand() % p.skills.size()];
+			int pi = -1;
 			for (int i = 0; i < (sizeof(abilities) / sizeof(abilities[0]));i++) {
 				if (event == abilities[i]) {
-					p = i;
+					pi = i;
 					break;
 				}
 			}
 			while (true) {
-				switch (p) {
+				switch (pi) {
 				case -1: {
-					p = rand() % (sizeof(abilities) / sizeof(abilities[0]));
+					pi = rand() % (sizeof(abilities) / sizeof(abilities[0]));
 					break;
 				}
 				case 0: {
@@ -1123,7 +1118,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 						cout << "You decide to go all out in the final sprint" << endl;
 						racePosition(2);
 						cout << "You get 20 dollars as a prize" << endl;
-						update(happiness, 0, health, 0, money, 20, iq, 0);
+						update(p, 0, 0, 20, 0);
 						return;
 					}
 					else if (race == 2) {
@@ -1132,15 +1127,15 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 							cout << "You get exhausted before the finish line and get caught" << endl;
 							racePosition(3);
 							cout << "You get 5 dollars as a prize" << endl;
-							update(happiness, 0, health, 0, money, 5, iq, 0);
+							update(p, 0, 0, 5, 0);
 							return;
 						}
 						else if (fail >= 9) {
 							cout << "You manage to finish in the front" << endl;
 							racePosition(1);
 							cout << "You get 50 dollars as a prize"<<endl;
-							update(happiness, 50, health, 0, money, 50, iq, 0);
-							addSkills("cycling");
+							update(p, 10, 0, 50, 0);
+							addSkills(p,"cycling");
 							return;
 						}
 					}
@@ -1156,13 +1151,13 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					int art = racePosition(rand() % 3 + 1);
 					if (art <= 5) {
 						cout << "An expert decides to buy your painting for 50 dollars" << endl;
-						update(happiness, 0, health, 0, money, 50, iq, 0);
-						addSkills("art");
+						update(p, 0, 0, 50, 0);
+						addSkills(p,"art");
 						return;
 					}
 					else {
 						cout << "An expert decides to buy your painting for 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, 5, iq, 0);
+						update(p, 0, 0, 5, 0);
 						return;
 					}
 				}
@@ -1173,13 +1168,13 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					case 0: {
 						cout << "You find a common fish fossil" << endl;
 						cout << "They decide to buy it from you for 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, 5, iq, 0);
+						update(p, 0, 0, 5, 0);
 						break;
 					}
 					case 1: {
 						cout << "You find a rare tooth of a dinosaur" << endl;
 						cout << "They decide to buy it from you for 15 dollars" << endl;
-						update(happiness, 0, health, 0, money, 15, iq, 0);;
+						update(p, 0, 0, 15, 0);
 						break;
 					}
 					case 2: {
@@ -1190,35 +1185,35 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 						string tRex;
 						getline(cin, tRex);
 						cout << "The t-rex new name is " << tRex << endl;
-						update(happiness, 0, health, 0, money,100, iq, 0);
+						update(p, 0, 0, 100, 0);
 						break;
 					}
 					}
-					addSkills("archeology");
+					addSkills(p,"archeology");
 					return;
 				}
 				case 3: {
 					cout << "You participate in a math competition" << endl;
-					if (iq <= 5) {
+					if (p.iq <= 5) {
 						cout << "Your iq is too low" << endl;
 						racePosition(3);
 						cout << "You get 5 dollars as a prize" << endl;
-						update(happiness, 0, health, 0, money, 5, iq, 0);
+						update(p, 0, 0, 5, 0);
 						return;
 					}
-					else if (iq >= 6 && iq <= 15) {
+					else if (p.iq >= 6 && p.iq <= 15) {
 						cout << "You have an average iq" << endl;
 						racePosition(2);
 						cout << "You get 10 dollars as a prize" << endl;
-						update(happiness, 0, health, 0, money, 10, iq, 0);
+						update(p, 0, 0, 10, 0);
 						return;
 					}
-					else if (iq > 15) {
+					else if (p.iq > 15) {
 						cout << "Your iq is above average" << endl;
 						racePosition(1);
 						cout << "You get 50 dollars as a prize" << endl;
-						update(happiness, 5, health, 0, money, 50, iq, 0);
-						addSkills("math");
+						update(p, 5, 0, 50, 0);
+						addSkills(p,"math");
 						return;
 					}
 				}
@@ -1228,7 +1223,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					string band;
 					getline(cin, band);
 					cout << "You went to the " << band << " concert" << endl;
-					addSkills("music");
+					addSkills(p,"music");
 					return;
 				}
 				case 5: {
@@ -1238,23 +1233,23 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					case 0: {
 						cout << "You write a kids book" << endl;
 						cout << "An experts decides to pay it 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, 5, iq, 0);
+						update(p, 0, 0, 5, 0);
 						break;
 					}
 					case 1: {
 						cout << "You write a fantasy book" << endl;
 						cout << "An experts decides to pay it 15 dollars" << endl;
-						update(happiness, 0, health, 0, money, 15, iq, 0);
+						update(p, 0, 0, 15, 0);
 						break;
 					}
 					case 2: {
 						cout << "You write a real masterpiece" << endl;
 						cout << "An experts decides to pay it 100 dollars" << endl;
-						update(happiness, 0, health, 0, money, 100, iq, 0);
+						update(p, 0, 0, 100, 0);
 						break;
 					}
 					}
-					addSkills("reading");
+					addSkills(p,"reading");
 					return;
 				}
 				case 6: {
@@ -1264,23 +1259,23 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					case 0: {
 						cout << "You get the part of an extra" << endl;
 						cout << "They pay you 5 dollars" << endl;
-						update(happiness, 0, health, 0, money, 5, iq, 0);
+						update(p, 0, 0, 5, 0);
 						break;
 					}
 					case 1: {
 						cout << "You get the part of a side character" << endl;
 						cout << "They pay you 15 dollars" << endl;
-						update(happiness, 0, health, 0, money, 15, iq, 0);
+						update(p, 0, 0, 15, 0);
 						break;
 					}
 					case 2: {
 						cout << "You get the protagonist role" << endl;
 						cout << "They pay you 100 dollars" << endl;
-						update(happiness, 0, health, 0, money, 100, iq, 0);
+						update(p, 0, 0, 100, 0);
 						break;
 					}
 					}
-					addSkills("drama");
+					addSkills(p,"drama");
 					return;
 				}
 				case 7: {
@@ -1308,7 +1303,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 						if (trick == 0) {
 							cout << "You teach them how to do a flip" << endl;
 							cout << "The owner is so impressed that decide to pay you 50 dollars" << endl;
-							update(happiness, 0, health, 0, money, 50, iq, 0);
+							update(p, 0, 0, 50, 0);
 							return;
 						}
 						else {
@@ -1329,7 +1324,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		}
 		case 8: {
 			cout << "Your school is organising a Christmas play" << endl;
-			if (find(skills.begin(), skills.end(), "drama") == skills.end()) {
+			if (find(p.skills.begin(), p.skills.end(), "drama") == p.skills.end()) {
 				cout << "Do you want to participate?(1. yes 2. no)" << endl;
 				int act = inputControl(1, 2);
 				if (act == 2) {
@@ -1347,7 +1342,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 			int get = rand() % 2 + 1;
 			if (get == 1 || role == 5) {
 				cout << "You get accepted as the role of " << roles[role - 1] << endl;
-				update(happiness, 5, health, 0, money, 0, iq, 0);
+				update(p, 5, 0, 0, 0);
 				return;
 			}
 			else if (get == 2) {
@@ -1374,8 +1369,8 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				int shop = inputControl(1, 3);
 				switch (shop) {
 				case 1: {
-					if (money >= 10) {
-						update(happiness, 0, health, 2, money, -10, iq, 0);
+					if (p.money >= 10) {
+						update(p, 0, 2, -10, 0);
 						return;
 					}
 					else {
@@ -1384,8 +1379,8 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					}
 				}
 				case 2: {
-					if (money >= 5) {
-						update(happiness, 5, health, 0, money, 5, iq, 0);
+					if (p.money >= 5) {
+						update(p, 5, 0, -5 ,0);
 						return;
 					}
 					else {
@@ -1408,49 +1403,48 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 					cout << "4. fish 5 dollars" << endl;
 					int food = inputControl(1, 4);
 					if (food == 1) {
-						if (money < 20) {
+						if (p.money < 20) {
 							cout << "You don't have enough money for the lobster" << endl << endl;
 							continue;
 						}
 						else {
 							cout << "You eat a delicious lobster" << endl;
-							update(happiness, 0, health, 0, money, -20, iq, 0);
+							update(p, 0, 0, -20, 0);
 							return;
 						}
 					}
 					else if (food == 2) {
-						if (money < 15) {
+						if (p.money < 15) {
 							cout << "You don't have enough money for the crab" << endl << endl;
 							continue;
 						}
 						else {
 							cout << "You eat a delicious crab" << endl;
-							update(happiness, 0, health, 0, money, -15, iq, 0);
+							update(p, 0, 0, -15, 0);
 							return;
 						}
 					}
 					else if (food == 3) {
-						if (money < 10) {
+						if (p.money < 10) {
 							cout << "You don't have enough money for sushi"<<endl<<endl;
 							continue;
 						}
 						else {
 							cout << "You eat delicios sushi"<<endl;
-							update(happiness, 0, health, 0, money, -10, iq, 0);
+							update(p, 0, 0, -10, 0);
 							return;
 						}
 					}
 					else if (food == 4) {
-						if (money < 5) {
+						if (p.money < 5) {
 							cout << "You don't have enough money fo fish" << endl;
 							cout << "You are starving" << endl;
-							cout << "-3 health" << endl;
-							update(happiness, -10, health, -3, money, 0, iq, 0);
+							update(p, -10, -3, 0, 0);
 							return;
 						}
 						else {
 							cout << "You eat delicious food" << endl;
-							update(happiness, 0, health, 0, money, -5, iq, 0);
+							update(p, 0, 0, -5, 0);
 							return;
 						}
 					}
@@ -1491,7 +1485,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				}
 				cout << endl << "You got " << score << "/3" << endl;
 				if (score == 3) {
-					addSkills("sea");
+					addSkills(p,"sea");
 					return;
 				}
 				else {
@@ -1499,24 +1493,25 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 				}
 			}
 			case 4: {
-				if (position == 0) {
+				if (p.friends.empty()) {
 					cout << "You don't have friends that can go with you" << endl;
 					cout << "So you sit down at a bench alone" << endl;
-					update(happiness, -5, health, 0, money, 0, iq, 0);
+					update(p, -5, 0, 0, 0);
 					return;
 				}
 				else {
-					if (position == 1) {
-						cout << "You spend all day with " << f[0].name  << endl;
-						update(happiness, 6, health, 0, money, 0, iq, 0);
+					if (p.friends.size() == 1) {
+						cout << "You spend all day with " << p.friends[0].name << endl;
+						update(p, 6, 0, 0, 0);
 						return;
 					}
 					else {
 						cout << "You spend all day with ";
-						for (int i = 0;i < position; i++) {
-							cout << f[i].name << ", ";
+						for (int i = 0; i < p.friends.size(); i++) {
+							cout << p.friends[i].name << ", ";
 						}
-						update(happiness, 8, health, 0, money, 0, iq, 0);
+						cout << endl;
+						update(p, 8, 0, 0, 0);
 						return;
 					}
 				}
@@ -1525,7 +1520,7 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 		}
 		}
 	}
-	else if (age >= 15 && age <= 18) {
+	else if (p.age >= 15 && p.age <= 18) {
 		//work in progress
 		return;
 	}
@@ -1533,29 +1528,22 @@ void school(int& health, int& money, int& happiness,int &iq, int age, Person f[]
 
 int main() {
 	srand(time(nullptr));
-	string name;
-	int gender;
-	int age = 0;
-	int health = 100;
-	int money = 0;
-	int happiness = 50;
-	int iq = 0;
-	Person friends[10];
-	int fPosition = 0;
-	string sport;
+	
+	Player p;
+
 	cout << "insert your name: " << endl;
-	getline(cin, name);
+	getline(cin, p.name);
 	cout << "male(1) or female(2)" << endl;
-	gender = inputControl(1,2);
+	p.gender = inputControl(1,2);
 	system("cls");
-	cout << "Welcome to life " << name << endl<<endl;
-	while (age <= 5) {
-		zeroToFiveEvent(health, money, happiness, age,iq,friends,fPosition,sport);
-		age++;
-		menu(health, money, happiness, age, iq, "grandparents", "doctor");
-		if (death == true) {
+	cout << "Welcome to life " << p.name << endl<<endl;
+	while (p.age <= 5) {
+		zeroToFiveEvent(p);
+		p.age++;
+		menu(p, "grandparents", "doctor");
+		if (p.death == true) {
 			cout << "You died" << endl;
-			recap0To5(name,age,health,money,happiness,skills,sport,friends,fPosition);
+			recap(p);
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			cin.get();
 			return 0;
@@ -1563,16 +1551,16 @@ int main() {
 		system("cls");
 	}
 	cout << "First five years recap" << endl;
-	recap0To5(name, age, health, money, happiness, skills, sport, friends, fPosition);
+	recap(p);
 	cout << "Press enter to start school" << endl;
 	cin.get();
 	system("cls");
 	cout << "Welcome to school" << endl<<endl;
-	while (age >= 6 && age <= 11) {
-		school(health, money, happiness, iq,age, friends, fPosition, sport);
-		age++;
-		menu(health, money, happiness, age, iq, "park", "doctor");
-		if (death == true) {
+	while (p.age >= 6 && p.age <= 11) {
+		school(p);
+		p.age++;
+		menu(p, "park", "doctor");
+		if (p.death == true) {
 			cout << "You died" << endl;
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			cin.get();
@@ -1582,16 +1570,16 @@ int main() {
 		
 	}
 	cout << "You finished elementary school" << endl<<endl;
-	recapElementary(name,age,health,iq,money,happiness,skills,sport,friends,fPosition);
+	recap(p);
 	cout << "Press enter to start middle school" << endl;
 	cin.get();
 	system("cls");
 	cout << "Welcome to middle school" << endl << endl;
-	while (age >= 12 && age <= 14) {
-		school(health, money, happiness, iq, age, friends, fPosition, sport);
-		age++;
-		menu(health, money, happiness, age, iq, "park", "doctor");
-		if (death == true) {
+	while (p.age >= 12 && p.age <= 14) {
+		school(p);
+		p.age++;
+		menu(p, "park", "doctor");
+		if (p.death == true) {
 			cout << "You died" << endl;
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			cin.get();
@@ -1600,7 +1588,7 @@ int main() {
 		system("cls");
 	}
 	cout << "You finished middle school" << endl << endl;
-	recapElementary(name, age, health, iq, money, happiness, skills, sport, friends, fPosition);
+	recap(p);
 	cout << "Press enter to start high school" << endl;
 	cin.get();
 	system("cls");
